@@ -1,0 +1,30 @@
+runtime: php55
+api_version: 1
+
+handlers:
+
+- url: /
+  script: index.html
+
+- url: /(.+\.html)$
+  script: \1
+
+- url: /(.+\.php)$
+  script: \1
+
+- url: /vendor
+  static_dir: vendor
+
+- url: /img
+  static_dir: img
+
+- url: /css
+  static_dir: css
+
+- url: /(.+\.js)$
+  script: \1
+
+- url: /.*
+  script: notfound.html
+
+
