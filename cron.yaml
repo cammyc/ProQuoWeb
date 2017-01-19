@@ -1,0 +1,4 @@
+cron:
+- description: "ping apple apns service"
+  url: /scalpr_ws/ios_check_new_conversation_messages.php
+  schedule: every 1 minutes

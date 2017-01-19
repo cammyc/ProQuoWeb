@@ -63,6 +63,12 @@ class MessageNotification
 	public $attractionName;
 }
 
+class iOSUserDeviceToken
+{
+	public $userID;
+	public $deviceToken;
+}
+
 class Security {
 	public static function encrypt($input, $key) {
 		$size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB); 
@@ -1030,6 +1036,41 @@ function userLeaveConversation($mysqli, $conversationID, $userID){
   	}else{
     	return -1; //db error
   	}
+}
+
+function updateIOSDeviceToken($mysqli, $userID, $deviceToken){
+	$updateQuery = "INSERT INTO IOSDeviceTokens VALUES (NULL, ?, ?, NULL)";
+	$statement = $mysqli->prepare($updateQuery);
+	$statement->bind_param("is", $userID, $deviceToken);
+	$statement->execute();
+
+	if($statement){
+  		return 1;
+  	}else{
+  		return -1;
+  	}
+}
+
+function retrieveAllIOSUserDevicesTokens($mysqli){
+	$updateQuery = "SELECT UserID, Token FROM IOSDeviceTokens";
+	$statement = $mysqli->prepare($updateQuery);
+	$statement->bind_param("is", $userID, $deviceToken);
+	$statement->execute();
+	$result = $statement->get_result();
+
+	$userDeviceTokens = array();
+	$i = 0;
+
+	while($row = $result->fetch_array(MYSQLI_NUM)){
+		$udt = new iOSUserDeviceToken();
+		$udt->userID = $row[0];
+		$udt->deviceToken = $row[1];
+
+		$userDeviceTokens[$i] = $udt;
+		$i++;
+	}
+
+	return $userDeviceTokens;
 }
 
 	$isValid = false;
