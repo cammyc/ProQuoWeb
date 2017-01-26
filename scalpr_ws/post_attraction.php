@@ -15,21 +15,6 @@
 	$attraction->lat = $_POST['lat'];
 	$attraction->lon = $_POST['lon'];
 
-	// Required field names
-	$required = array('creatorID', 'venueName', 'attractionName', 'ticketPrice', 'numberOfTickets', 'date', 'imageURL', 'lat', 'lon');
-	//description is optional
-
-	// Loop over field names, make sure each one exists and is not empty
-	$error = false;
-	foreach($required as $field) {
-	  if (empty($_POST[$field])) {
-	    $error = true;
-	  }
-	}
-
-	if ($error) {
-	  echo 0;
-	} else {
 
 		$mysqli = getDB();
 
@@ -63,5 +48,5 @@
 
 
 		$mysqli->close();
-	}
+	
 ?>

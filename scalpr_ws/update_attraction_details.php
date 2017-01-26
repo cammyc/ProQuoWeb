@@ -13,22 +13,7 @@
 	$attraction->date = $_POST['date'];
 	$attraction->imageURL = $_POST['imageURL'];
 
-	// Required field names
-	$required = array('creatorID', 'attractionID', 'venueName', 'attractionName', 'ticketPrice', 'numberOfTickets', 'date', 'imageURL');
-	//description is optional
-
-
-	// Loop over field names, make sure each one exists and is not empty
-	$error = false;
-	foreach($required as $field) {
-	  if (empty($_POST[$field])) {
-	    $error = true;
-	  }
-	}
-
-	if ($error) {
-	  echo 0;
-	} else {
+	
 
 		$mysqli = getDB();
 		if (strcasecmp($attraction->imageURL, getAttractionImage($mysqli, $attraction->attractionID)) != 0){
@@ -58,5 +43,5 @@
 		//putting after because $attraction->imageURL will be changed if image changed
 		echo updateAttractionDetails($mysqli,$attraction);
 		$mysqli->close();
-	}
+	
 ?>

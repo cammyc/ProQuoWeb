@@ -5,20 +5,7 @@
 	$creatorID = $_POST['creatorID'];
 	$attractionID = $_POST['attractionID'];
 
-	// Required field names
-	$required = array('creatorID', 'attractionID');
-
-	// Loop over field names, make sure each one exists and is not empty
-	$error = false;
-	foreach($required as $field) {
-	  if (empty($_POST[$field])) {
-	    $error = true;
-	  }
-	}
-
-	if ($error) {
-	  echo 0;
-	} else {
+	
 
 		$mysqli = getDB();
 
@@ -42,5 +29,5 @@
 		echo deleteAttraction($mysqli, $creatorID, $attractionID);
 
 		$mysqli->close();
-	}
+	
 ?>

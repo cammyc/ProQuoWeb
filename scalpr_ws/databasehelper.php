@@ -760,7 +760,7 @@ function CreateConversation($mysqli, $attractionID, $buyerID, $attractionName){
 
 function getUserConversations($mysqli, $userID){//currentDate is not needed
 	$query = 'SELECT Conversations.ID as ID, AttractionID, BuyerID, U2.ID as SellerID, concat(U1.FirstName, " ", U1.LastName) as BuyerName, concat(U2.FirstName, " ", U2.LastName) as SellerName, Title,
-				Message.ID as LastMessageID, Message.SenderID as LastMessageSenderID, Message.Message as LastMessageText, Message.TimeStamp as LastMessageTimeStamp, Conversations.TimeStamp as CreationTimeStamp, A.ImageURL as AttractionImageURL,
+				Message.ID as LastMessageID, Message.SenderID as LastMessageSenderID, Message.Message as LastMessageText, IFNULL(Message.TimeStamp, Conversations.Timestamp) as LastMessageTimeStamp, Conversations.TimeStamp as CreationTimeStamp, A.ImageURL as AttractionImageURL,
 				CASE 
 				WHEN Message.SenderID = ? THEN TRUE
 				WHEN IFNULL((SELECT LastReadMessage.MessageID FROM Scalpr.LastReadMessage WHERE ConversationID = Conversations.ID AND UserID = ? ORDER BY LastReadMessage.MessageID DESC LIMIT 1), -1) != Message.ID THEN FALSE
@@ -1039,9 +1039,53 @@ function userLeaveConversation($mysqli, $conversationID, $userID){
 }
 
 function updateIOSDeviceToken($mysqli, $userID, $deviceToken){
-	$updateQuery = "INSERT INTO IOSDeviceTokens VALUES (NULL, ?, ?, NULL)";
+
+	$checkQuery = "SELECT ID FROM IOSDeviceTokens WHERE Token = ?";
+	$checkStatement = $mysqli->prepare($checkQuery);
+	$checkStatement->bind_param("s", $deviceToken);
+	$checkStatement->execute();
+	$checkStatement->store_result();
+	$checkStatement->fetch();
+	$row_count = $checkStatement->num_rows;
+
+	if($row_count > 0){
+		$updateQuery = "UPDATE IOSDeviceTokens SET UserID = ? WHERE Token = ?";
+		$statement = $mysqli->prepare($updateQuery);
+		$statement->bind_param("is", $userID, $deviceToken);
+		$statement->execute();
+
+		if($statement){
+	  		return 1;
+	  	}else{
+	  		return -1;
+	  	}
+	}else{
+
+		$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
+		$timestamp = gmdate("Y-m-d H:i:s");
+
+
+		$insertQuery = "INSERT INTO IOSDeviceTokens VALUES (NULL, ?, ?, ?)";
+		$statement = $mysqli->prepare($insertQuery);
+		$statement->bind_param("iss", $userID, $deviceToken, $timeStamp);
+		$statement->execute();
+
+		if($statement){
+	  		return 1;
+	  	}else{
+	  		return -1;
+	  	}
+	}
+
+
+
+	
+}
+
+function removeIOSDeviceToken($mysqli, $deviceToken){
+	$updateQuery = "DELETE FROM IOSDeviceTokens WHERE Token = ?";
 	$statement = $mysqli->prepare($updateQuery);
-	$statement->bind_param("is", $userID, $deviceToken);
+	$statement->bind_param("s", $deviceToken);
 	$statement->execute();
 
 	if($statement){
@@ -1054,7 +1098,6 @@ function updateIOSDeviceToken($mysqli, $userID, $deviceToken){
 function retrieveAllIOSUserDevicesTokens($mysqli){
 	$updateQuery = "SELECT UserID, Token FROM IOSDeviceTokens";
 	$statement = $mysqli->prepare($updateQuery);
-	$statement->bind_param("is", $userID, $deviceToken);
 	$statement->execute();
 	$result = $statement->get_result();
 
@@ -1084,7 +1127,7 @@ function retrieveAllIOSUserDevicesTokens($mysqli){
 
 	if (!$isValid){
 		echo 0;
-		return;
+		exit(0);
 	}
 
 ?>
