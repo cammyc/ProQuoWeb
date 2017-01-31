@@ -63,10 +63,11 @@ class MessageNotification
 	public $attractionName;
 }
 
-class iOSUserDeviceToken
+class UserDeviceToken
 {
 	public $userID;
 	public $deviceToken;
+	//public $deviceType //$deviceType -> 1 = android, 2 = iOS
 }
 
 class Security {
@@ -1076,9 +1077,6 @@ function updateIOSDeviceToken($mysqli, $userID, $deviceToken){
 	  		return -1;
 	  	}
 	}
-
-
-
 	
 }
 
@@ -1105,7 +1103,82 @@ function retrieveAllIOSUserDevicesTokens($mysqli){
 	$i = 0;
 
 	while($row = $result->fetch_array(MYSQLI_NUM)){
-		$udt = new iOSUserDeviceToken();
+		$udt = new UserDeviceToken();
+		$udt->userID = $row[0];
+		$udt->deviceToken = $row[1];
+
+		$userDeviceTokens[$i] = $udt;
+		$i++;
+	}
+
+	return $userDeviceTokens;
+}
+
+function updateAndroidDeviceToken($mysqli, $userID, $deviceToken){
+
+	$checkQuery = "SELECT ID FROM AndroidDeviceTokens WHERE Token = ?";
+	$checkStatement = $mysqli->prepare($checkQuery);
+	$checkStatement->bind_param("s", $deviceToken);
+	$checkStatement->execute();
+	$checkStatement->store_result();
+	$checkStatement->fetch();
+	$row_count = $checkStatement->num_rows;
+
+	if($row_count > 0){
+		$updateQuery = "UPDATE AndroidDeviceTokens SET UserID = ? WHERE Token = ?";
+		$statement = $mysqli->prepare($updateQuery);
+		$statement->bind_param("is", $userID, $deviceToken);
+		$statement->execute();
+
+		if($statement){
+	  		return 1;
+	  	}else{
+	  		return -1;
+	  	}
+	}else{
+
+		$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
+		$timestamp = gmdate("Y-m-d H:i:s");
+
+
+		$insertQuery = "INSERT INTO AndroidDeviceTokens VALUES (NULL, ?, ?, ?)";
+		$statement = $mysqli->prepare($insertQuery);
+		$statement->bind_param("iss", $userID, $deviceToken, $timeStamp);
+		$statement->execute();
+
+		if($statement){
+	  		return 1;
+	  	}else{
+	  		return -1;
+	  	}
+	}
+	
+}
+
+function removeAndroidDeviceToken($mysqli, $deviceToken){
+	$updateQuery = "DELETE FROM AndroidDeviceTokens WHERE Token = ?";
+	$statement = $mysqli->prepare($updateQuery);
+	$statement->bind_param("s", $deviceToken);
+	$statement->execute();
+
+	if($statement){
+  		return 1;
+  	}else{
+  		return -1;
+  	}
+}
+
+function retrieveAllAndroidUserDevicesTokens($mysqli){
+	$updateQuery = "SELECT UserID, Token FROM AndroidDeviceTokens";
+	$statement = $mysqli->prepare($updateQuery);
+	$statement->execute();
+	$result = $statement->get_result();
+
+	$userDeviceTokens = array();
+	$i = 0;
+
+	while($row = $result->fetch_array(MYSQLI_NUM)){
+		$udt = new UserDeviceToken();
 		$udt->userID = $row[0];
 		$udt->deviceToken = $row[1];
 

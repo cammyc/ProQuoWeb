@@ -149,7 +149,7 @@ header {
   min-height: auto;
   overflow-y: hidden;
   overflow-x: hidden;
-  background: url("../img/background.PNG") no-repeat center center ;
+  background: url("../img/background.png") no-repeat center center ;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
