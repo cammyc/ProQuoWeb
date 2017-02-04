@@ -1,5 +1,6 @@
 <?php
 	include_once("databasehelper.php");
+	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 	$attraction = new attraction();
 	$attraction->creatorID = $_POST['creatorID'];

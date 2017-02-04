@@ -3,12 +3,11 @@
 
 	$emailPhone = $_POST['emailPhone'];
 	$password = $_POST['password'];
-	$retrieveUserInfo = $_POST['retrieveUserInfo'];
 
 
 		$mysqli = getDB();
 
-		echo loginCheck($mysqli,$emailPhone,$password,$retrieveUserInfo);
+		echo loginCheck($mysqli,$emailPhone,$password);
 
 		$mysqli->close();
 	

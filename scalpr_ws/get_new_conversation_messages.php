@@ -1,5 +1,7 @@
 <?php
 	include_once("databasehelper.php");
+	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+
 	$conversationID = $_POST['conversationID'];
 	$userID = $_POST['userID'];
 

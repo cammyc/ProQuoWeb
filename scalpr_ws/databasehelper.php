@@ -1,5 +1,125 @@
 <?php
 
+require_once('firebase_php-jwt/vendor/autoload.php');
+use \Firebase\JWT\JWT; 
+define('SECRET_KEY','Wh3r3$Th3Cl0$3$tK@nyeT1ck3t@t?') ; // secret key can be a random string  and keep in secret from anyone
+define('ALGORITHM','HS512');
+
+
+	// $isValid = false;
+	// // /if(!empty())
+	// $value = $_SERVER['HTTP_SCALPRVERIFICATION'];
+	// $key = '$c@lPrK3Y1236547';
+	// $val = Security::decrypt($value, $key);
+	// if(strcmp($val, "WheresTheClosestKanyeTicketAt?") == 0){
+	// 	$isValid = true;
+	// }
+
+	// if (!$isValid){
+	// 	echo 0;
+	// 	exit(0);
+	// }
+
+class Security
+{
+	public static function createToken($mysqli, $userID, $name){
+		$tokenId    = base64_encode(mcrypt_create_iv(32));
+                    $issuedAt   = time();
+                    //$notBefore  = $issuedAt;  //Adding 10 seconds
+                    $expire     = $issuedAt + 31536000; // Adding 1 year
+                    $serverName = 'http://proquoapp.com'; /// set your domain name 
+ 
+  					
+        /*
+         * Create the token as an array
+         */
+        $data = [
+            'iat'  => $issuedAt,         // Issued at: time when the token was generated
+            'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+            'iss'  => $serverName,       // Issuer
+            'nbf'  => $issuedAt,        // Not before
+            'exp'  => $expire,           // Expire
+            'data' => [                  // Data related to the logged user you can set your required data
+	    	'id'   => $userID, // id from the users table
+	     	'name' => $name, //  name
+                      ]
+        ];
+
+      	$secretKey = base64_decode(SECRET_KEY);
+      	/// Here we will transform this array into JWT:
+      	$jwt = JWT::encode(
+                $data, //Data to be encoded in the JWT
+                $secretKey, // The signing key
+                 ALGORITHM 
+               ); 
+
+
+      	$timestamp = gmdate("Y-m-d H:i:s");
+      	$insertQuery = 'INSERT INTO AccessTokens VALUES (NULL, ?, ?, ?)';
+
+		$statement = $mysqli->prepare($insertQuery);
+		$statement->bind_param("iss", $userID, $jwt, $timestamp);
+		$statement->execute();
+
+	  	if($statement){
+	  		return $jwt;
+	  	}else{
+	  		return -1;
+	  	}
+
+     	//$unencodedArray = ['jwt' => $jwt];
+	}
+
+	public static function authenticateToken($token){
+		try {
+           	$secretKey = base64_decode(SECRET_KEY); 
+           	$DecodedDataArray = JWT::decode($token, $secretKey, array(ALGORITHM));
+           	//if decode was successful then the code below will run, if not the catch will be called
+
+
+			$mysqli = getDB();
+
+           	$checkQuery = 'SELECT ID FROM AccessTokens WHERE Token = ?';
+
+			$statement = $mysqli->prepare($checkQuery);
+			$statement->bind_param("s", $token);
+			$statement->execute();
+			$statement->store_result();
+			$statement->fetch();
+			$row_count = $statement->num_rows;
+
+			$mysqli->close();
+			
+			if($row_count == 0){
+				echo -1;
+				exit(0);
+			}
+
+        } catch (Exception $e) {
+				echo "-2";
+				$mysqli->close(); //just in case
+				exit(0);
+        }
+	}
+
+	public static function removeToken($token){
+		$mysqli = getDB();
+
+		$query = 'DELETE FROM AccessTokens WHERE Token = ?';
+
+		$statement = $mysqli->prepare($query);
+		$statement->bind_param("s", $token);
+		$statement->execute();
+
+		if($statement){
+	  		return 1;
+	  	}else{
+	  		return -1;
+	  	}
+
+	}
+}
+
 class UserProfile
 {
 	public $userID;
@@ -11,6 +131,7 @@ class UserProfile
 	public $displayPicURL;
 	public $facebookID;
 	public $googleID;
+	public $accessToken;
 }
 
 class Attraction
@@ -70,36 +191,36 @@ class UserDeviceToken
 	//public $deviceType //$deviceType -> 1 = android, 2 = iOS
 }
 
-class Security {
-	public static function encrypt($input, $key) {
-		$size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB); 
-		$input = Security::pkcs5_pad($input, $size); 
-		$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, ''); 
-		$iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND); 
-		mcrypt_generic_init($td, $key, $iv); 
-		$data = mcrypt_generic($td, $input); 
-		mcrypt_generic_deinit($td); 
-		mcrypt_module_close($td); 
-		$data = base64_encode($data); 
-		return $data; 
-	} 
-	private static function pkcs5_pad ($text, $blocksize) { 
-		$pad = $blocksize - (strlen($text) % $blocksize); 
-		return $text . str_repeat(chr($pad), $pad); 
-	} 
-	public static function decrypt($sStr, $sKey) {
-		$decrypted= mcrypt_decrypt(
-			MCRYPT_RIJNDAEL_128,
-			$sKey, 
-			base64_decode($sStr), 
-			MCRYPT_MODE_ECB
-		);
-		$dec_s = strlen($decrypted); 
-		$padding = ord($decrypted[$dec_s-1]); 
-		$decrypted = substr($decrypted, 0, -$padding);
-		return $decrypted;
-	}	
-}
+// class Security {
+// 	public static function encrypt($input, $key) {
+// 		$size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB); 
+// 		$input = Security::pkcs5_pad($input, $size); 
+// 		$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, ''); 
+// 		$iv = mcrypt_create_iv (mcrypt_enc_get_iv_size($td), MCRYPT_RAND); 
+// 		mcrypt_generic_init($td, $key, $iv); 
+// 		$data = mcrypt_generic($td, $input); 
+// 		mcrypt_generic_deinit($td); 
+// 		mcrypt_module_close($td); 
+// 		$data = base64_encode($data); 
+// 		return $data; 
+// 	} 
+// 	private static function pkcs5_pad ($text, $blocksize) { 
+// 		$pad = $blocksize - (strlen($text) % $blocksize); 
+// 		return $text . str_repeat(chr($pad), $pad); 
+// 	} 
+// 	public static function decrypt($sStr, $sKey) {
+// 		$decrypted= mcrypt_decrypt(
+// 			MCRYPT_RIJNDAEL_128,
+// 			$sKey, 
+// 			base64_decode($sStr), 
+// 			MCRYPT_MODE_ECB
+// 		);
+// 		$dec_s = strlen($decrypted); 
+// 		$padding = ord($decrypted[$dec_s-1]); 
+// 		$decrypted = substr($decrypted, 0, -$padding);
+// 		return $decrypted;
+// 	}	
+// }
 
 
 function getDB(){//replace all other uses so that when site goes live I only have to change this function from root,root
@@ -146,9 +267,17 @@ function createAccount($mysqli,$firstName, $lastName, $emailPhone, $password){
 	$statement->execute();
 
   	if($statement){
-  		$id = $statement->insert_id;
-  		$statement->close();
-  		return $id;
+  		$u = new UserProfile();
+  		$u->userID = $statement->insert_id;
+  			$statement->close();
+
+        $u->firstName = $firstName;
+        $u->lastName = $lastName;
+        $u->email = $email;
+        $u->phone = $phone;
+        $u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);//really hope this never fails or user will have a bad time
+
+  		return json_encode($u);
   	}else{
     	return 0;
   	}
@@ -170,7 +299,13 @@ function createAccountFBLogin($mysqli,$firstName, $lastName, $email, $fbID){
 	$statement->close();
 
 	if($row_count > 0){
-		return json_encode($u); //user logged in
+		$u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);
+
+          if($u->accessToken == -1){
+          	return -1;
+          }else{
+          	return json_encode($u);
+          }
 	}else{
 		if(empty($email)){
 			return -3; //tell user to put in email, fb didn't have one
@@ -197,9 +332,16 @@ function createAccountFBLogin($mysqli,$firstName, $lastName, $email, $fbID){
 				$insertStatement->execute();
 
 			  	if($insertStatement){
-			  		$id = $insertStatement->insert_id; //only return ID - user data is already on phone if account was just created
-			  		$insertStatement->close();
-			  		return $id;
+			  		$u->userID = $insertStatement->insert_id;
+			  			$insertStatement->close();
+
+		            $u->firstName = $firstName;
+		            $u->lastName = $lastName;
+		            $u->email = $email;
+		            $u->displayPicURL = $picURL;
+		            $u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);//really hope this never fails or user will have a bad time
+
+			  		return json_encode($u);
 			  	}else{
 			    	return -1;//db error logging in/creating account
 			  	}
@@ -224,7 +366,13 @@ function createAccountGoogleLogin($mysqli,$firstName, $lastName, $email, $displa
 	$statement->close();
 
 	if($row_count > 0){
-		return json_encode($u); //user logged in
+		$u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);
+
+        if($u->accessToken == -1){
+          	return -1;
+        }else{
+          	return json_encode($u);
+        }
 	}else{
 		$emailQuery = 'SELECT ID, FirstName, LastName, Email, PhoneNumber, Password, DisplayPicURL FROM Scalpr.Users WHERE Email = ?';
 		$statement = $mysqli->prepare($emailQuery);
@@ -247,9 +395,16 @@ function createAccountGoogleLogin($mysqli,$firstName, $lastName, $email, $displa
 			$insertStatement->execute();
 
 		  	if($insertStatement){
-		  		$id = $insertStatement->insert_id; //only return ID - user data is already on phone if account was just created
-		  		$insertStatement->close();
-		  		return $id;
+		  		$u->userID = $insertStatement->insert_id;
+			  		$insertStatement->close();
+
+	            $u->firstName = $firstName;
+	            $u->lastName = $lastName;
+	            $u->email = $email;
+	            $u->displayPicURL = $displayPicURL;
+	            $u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);//really hope this never fails or user will have a bad time
+
+		  		return json_encode($u);
 		  	}else{
 		    	return -1;//db error logging in/creating account
 		  	}
@@ -257,9 +412,7 @@ function createAccountGoogleLogin($mysqli,$firstName, $lastName, $email, $displa
 	}
 }
 
-function loginCheck($mysqli,$emailPhone, $password, $retrieveUserInfo){
-
-	$getAccountInfo = ($retrieveUserInfo === 'true') ? true: false;
+function loginCheck($mysqli,$emailPhone, $password){
 
 	$checkQuery = "";
 
@@ -289,22 +442,23 @@ function loginCheck($mysqli,$emailPhone, $password, $retrieveUserInfo){
 	$ID = $row[0];
 
 	if(password_verify($password, $passwordHash)){
-		if($getAccountInfo){
 
-				$u = new UserProfile();
-		          $u->userID = $ID;
-		          $u->firstName = $row[1];
-		          $u->lastName = $row[2];
-		          $u->email = $row[3];
-		          $u->phoneNumber = $row[4];
-		          $u->password = $row[5];
-		          $u->displayPicURL = $row[6];
+		$u = new UserProfile();
+          $u->userID = $ID;
+          $u->firstName = $row[1];
+          $u->lastName = $row[2];
+          $u->email = $row[3];
+          $u->phoneNumber = $row[4];
+          $u->password = $row[5];
+          $u->displayPicURL = $row[6];
+          $u->accessToken = Security::createToken($mysqli, $u->userID, $u->firstName);
 
-	        return json_encode($u);
-      
-		}else{
-			return $ID;
-		}
+          if($u->accessToken == -1){
+          	return -1;
+          }else{
+          	return json_encode($u);
+          }
+    
 	}else{
 		return 0;
 	}	
@@ -1188,19 +1342,5 @@ function retrieveAllAndroidUserDevicesTokens($mysqli){
 
 	return $userDeviceTokens;
 }
-
-	$isValid = false;
-	// /if(!empty())
-	$value = $_SERVER['HTTP_SCALPRVERIFICATION'];
-	$key = '$c@lPrK3Y1236547';
-	$val = Security::decrypt($value, $key);
-	if(strcmp($val, "WheresTheClosestKanyeTicketAt?") == 0){
-		$isValid = true;
-	}
-
-	if (!$isValid){
-		echo 0;
-		exit(0);
-	}
 
 ?>

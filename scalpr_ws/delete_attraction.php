@@ -1,6 +1,8 @@
 <?php
-	use google\appengine\api\cloud_storage\CloudStorageTools;
+	//use google\appengine\api\cloud_storage\CloudStorageTools;
 	include_once("databasehelper.php");
+	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+
 
 	$creatorID = $_POST['creatorID'];
 	$attractionID = $_POST['attractionID'];
