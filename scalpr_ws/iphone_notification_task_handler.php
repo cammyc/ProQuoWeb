@@ -62,6 +62,8 @@
 
 		// Close the connection to the server
 		fclose($fp);
+	}else{
+		http_response_code(200);//200-299 is success - nothing sent
 	}
 
 	
