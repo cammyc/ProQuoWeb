@@ -97,7 +97,6 @@ class Security
 
         } catch (Exception $e) {
 				echo "-2";
-				$mysqli->close(); //just in case
 				exit(0);
         }
 	}
@@ -1037,6 +1036,26 @@ function getNewConversationMessages($mysqli, $conversationID, $userID){//use AND
 	return $messages;
 }
 
+function getUserToNotify($mysqli, $senderID, $convoID){
+	$query = "SELECT 
+				CASE WHEN Conversations.BuyerID = ? THEN attr.CreatorID
+				ELSE Conversations.BuyerID
+				END AS ID
+				FROM Scalpr.Conversations 
+				LEFT JOIN Scalpr.Attractions as attr on attr.ID = AttractionID 
+				WHERE Conversations.ID = ?";
+
+	$statement = $mysqli->prepare($query);
+	$statement->bind_param("ii", $senderID, $convoID);
+	$statement->execute();
+	$statement->store_result();
+	$id = null;
+	$statement->bind_result($id);
+	$statement->fetch();
+
+	return $id;
+}
+
 function checkNewMessages($mysqli, $userID, $appVersion, $deviceType){
 	//$deviceType -> 1 = android, 2 = iOS
 
@@ -1268,6 +1287,28 @@ function retrieveAllIOSUserDevicesTokens($mysqli){
 	return $userDeviceTokens;
 }
 
+function retrieveSingleUserIOSDeviceTokens($mysqli, $userID){
+	$query = "SELECT UserID, Token FROM IOSDeviceTokens WHERE UserID = ?";
+	$statement = $mysqli->prepare($query);
+	$statement->bind_param("i", $userID);
+	$statement->execute();
+	$result = $statement->get_result();
+
+	$userDeviceTokens = array();
+	$i = 0;
+
+	while($row = $result->fetch_array(MYSQLI_NUM)){
+		$udt = new UserDeviceToken();
+		$udt->userID = $row[0];
+		$udt->deviceToken = $row[1];
+
+		$userDeviceTokens[$i] = $udt;
+		$i++;
+	}
+
+	return $userDeviceTokens;
+}
+
 function updateAndroidDeviceToken($mysqli, $userID, $deviceToken){
 
 	$checkQuery = "SELECT ID FROM AndroidDeviceTokens WHERE Token = ?";
@@ -1291,9 +1332,7 @@ function updateAndroidDeviceToken($mysqli, $userID, $deviceToken){
 	  	}
 	}else{
 
-		$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
 		$timestamp = gmdate("Y-m-d H:i:s");
-
 
 		$insertQuery = "INSERT INTO AndroidDeviceTokens VALUES (NULL, ?, ?, ?)";
 		$statement = $mysqli->prepare($insertQuery);
@@ -1325,6 +1364,28 @@ function removeAndroidDeviceToken($mysqli, $deviceToken){
 function retrieveAllAndroidUserDevicesTokens($mysqli){
 	$updateQuery = "SELECT UserID, Token FROM AndroidDeviceTokens";
 	$statement = $mysqli->prepare($updateQuery);
+	$statement->execute();
+	$result = $statement->get_result();
+
+	$userDeviceTokens = array();
+	$i = 0;
+
+	while($row = $result->fetch_array(MYSQLI_NUM)){
+		$udt = new UserDeviceToken();
+		$udt->userID = $row[0];
+		$udt->deviceToken = $row[1];
+
+		$userDeviceTokens[$i] = $udt;
+		$i++;
+	}
+
+	return $userDeviceTokens;
+}
+
+function retrieveSingleUserAndroidDeviceTokens($mysqli, $userID){
+	$query = "SELECT UserID, Token FROM AndroidDeviceTokens WHERE UserID = ?";
+	$statement = $mysqli->prepare($query);
+	$statement->bind_param("i", $userID);
 	$statement->execute();
 	$result = $statement->get_result();
 

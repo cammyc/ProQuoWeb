@@ -1,0 +1,6 @@
+queue:
+- name: queue-iphone-notif
+  rate: 1/s
+
+- name: queue-android-notif
+  rate: 1/s

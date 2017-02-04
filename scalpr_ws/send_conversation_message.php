@@ -2,6 +2,9 @@
 	include_once("databasehelper.php");
 	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
+	use google\appengine\api\taskqueue\PushTask;
+	use google\appengine\api\taskqueue\PushQueue;
+
 	$conversationID = $_POST['conversationID'];
 	$senderID = $_POST['senderID'];
 	$message = $_POST['message'];
@@ -10,9 +13,26 @@
 		$mysqli = getDB();
 
 		echo sendConversationMessage($mysqli, $conversationID, $senderID, $message);
+		$userToReceiveNotificationsID = getUserToNotify($mysqli, $senderID, $conversationID);
 
-		sendIOSNotifications($mysqli);
-		sendAndroidNotifications($mysqli);
+		$messages = checkNewMessages($mysqli, $userToReceiveNotificationsID, getMinAndroidVersion(), 1);
+
+		if($messages != 0){//this should always be true because user just sent a message
+			$messages = json_encode($messages);
+			$iOSTask = new PushTask('/scalpr_ws/iphone_notification_task_handler.php', ["messages" => $messages, "userID" => $userToReceiveNotificationsID]);
+			$androidTask = new PushTask('/scalpr_ws/android_notification_task_handler.php', ["messages" => $messages, "userID" => $userToReceiveNotificationsID]);
+
+			$task_name_iOS = $iOSTask->add("queue-iphone-notif");
+			$task_name_android = $androidTask->add("queue-android-notif");
+		}
+
+		
+
+		// $iOSTokens = retrieveSingleUserIOSDeviceTokens($mysqli, $userToReceiveNotificationsID);
+		// $androidTokens = retrieveSingleUserAndroidDeviceTokens($mysqli, $userToReceiveNotificationsID);
+
+		// sendIOSNotifications($mysqli);
+		// sendAndroidNotifications($mysqli);
 		
 		
 		$mysqli->close();
