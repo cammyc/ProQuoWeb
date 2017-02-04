@@ -67,30 +67,43 @@
 
     <header>
         <div class="container">
-            <div class="row">
-                <div class="col-sm-7">
-                    <div class="header-content">
-                        <div class="header-content-inner">
-                            <img src="img/logo.png">
-                           <!-- <center><a href="#download" class="btn btn-outline btn-xl page-scroll">Start Now for Free!</a></center> -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-5">
-                    <div class="device-container">
-                        <div class="device-mockup iphone6_plus portrait white">
-                            <div class="device">
-                                <div class="screen">
-                                    <img src="img/demo-screen-1.png" class="img-responsive" alt="">
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+        <html>
+        <head>
+                <style>
+                    #map { 
+                    height: 100%;
+                    width: 100%;
+                    left: 0;
+                    position: absolute;
+                    top: 0; 
+                    }
+                </style>
+        </head>
+        <body>
+                <div id="map"></div>
+                <script>
+                function initMap() {
+                var uluru = {lat: 40.0150, lng: -105.2705};  // LOCATION HERE
+                var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 14,
+                scrollwheel: false, //DISABLE MAP SCROLLWHEEL
+                center: uluru
+                });
+                var marker = new google.maps.Marker({
+                position: uluru,
+                map: map
+                });
+                }
+                </script>
+            <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA05BKY98stTeom02qJA7ALXPYmhLuIFWE&callback=initMap">
+        </script>
+    </body>
+</html>
+    
+</div>
+</div>
+</header>
 
     <section id="download" class="download bg-primary text-center">
         <div class="container">
