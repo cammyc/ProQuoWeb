@@ -55,7 +55,18 @@
 							updateLastNotifiedMessage($mysqli, $mesNot->messageID, $mesNot->convoID, $udt->userID);
 							http_response_code(200);//200-299 is success
 						}else{
-							http_response_code(199);//error
+							if($json_res["failure"]){
+								if(strcasecmp($json_res["results"][0]["error"], "NotRegistered") == 0){
+									removeAndroidDeviceToken($mysqli, $udt->deviceToken);
+									http_response_code(200);//200-299 is success
+								}else if(strcasecmp($json_res["results"][0]["error"], "Unavailable") == 0){
+									http_response_code(199);//200-299 is success - 199 results in retry
+								}else{
+									http_response_code(199);//200-299 is success - 199 results in retry
+								}
+							}else{
+								http_response_code(199);//error
+							}
 						}
 					}
 				

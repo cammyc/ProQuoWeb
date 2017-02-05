@@ -36,6 +36,7 @@
 				$body['aps'] = array(
 				  'alert' => $message,
 				  'sound' => 'default',
+				  'badge' => sizeof($messages)
 				  );
 
 				$body['data'] = json_encode($mesNot);
