@@ -1,10 +1,10 @@
 <?php
 	include_once("databasehelper.php");
-	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+	$userID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 	$user = new UserProfile();
 
-	$user->userID = $_POST['userID'];
+	$user->userID = $userID;
 	$user->firstName = $_POST['firstName'];
 	$user->lastName = $_POST['lastName'];
 	$user->phoneNumber = $_POST['phoneNumber'];

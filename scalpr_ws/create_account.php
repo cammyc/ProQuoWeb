@@ -6,13 +6,10 @@
 	$emailPhone = $_POST['emailPhone'];
 	$password = $_POST['password'];
 
-	
-	 	$mysqli = getDB();
+ 	$mysqli = getDB();
 
-		echo createAccount($mysqli,$firstName,$lastName,$emailPhone,$password);
+	echo createAccount($mysqli,$firstName,$lastName,$emailPhone,$password);
 
-		$mysqli->close();
-	
+	$mysqli->close();
 
-	
 ?>

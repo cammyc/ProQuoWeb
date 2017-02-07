@@ -79,20 +79,24 @@ class Security
 
 			$mysqli = getDB();
 
-           	$checkQuery = 'SELECT ID FROM AccessTokens WHERE Token = ?';
+           	$checkQuery = 'SELECT UserID FROM AccessTokens WHERE Token = ?';
 
 			$statement = $mysqli->prepare($checkQuery);
 			$statement->bind_param("s", $token);
 			$statement->execute();
 			$statement->store_result();
+			$statement->bind_result($userID);
+
 			$statement->fetch();
 			$row_count = $statement->num_rows;
 
 			$mysqli->close();
 			
 			if($row_count == 0){
-				echo -1;
+				echo "-1";
 				exit(0);
+			}else{
+				return $userID;
 			}
 
         } catch (Exception $e) {

@@ -1,10 +1,10 @@
 <?php
 	include_once("databasehelper.php");
-	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+	$buyerID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 
 	$attractionID = $_POST['attractionID'];
-	$buyerID = $_POST['buyerID'];
+	// $buyerID = $_POST['buyerID'];
 	$attractionName = $_POST['attractionName'];
 
 	

@@ -1,12 +1,12 @@
 <?php
 	include_once("databasehelper.php");
-	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+	$senderID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 	use google\appengine\api\taskqueue\PushTask;
 	use google\appengine\api\taskqueue\PushQueue;
 
 	$conversationID = $_POST['conversationID'];
-	$senderID = $_POST['senderID'];
+	// $senderID = $_POST['senderID'];
 	$message = $_POST['message'];
 
 	

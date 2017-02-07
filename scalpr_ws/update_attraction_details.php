@@ -1,11 +1,11 @@
 <?php
 	use google\appengine\api\cloud_storage\CloudStorageTools;
 	include_once("databasehelper.php");
-	Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+	$creatorID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 
 	$attraction = new attraction();
-	$attraction->creatorID = $_POST['creatorID'];
+	$attraction->creatorID = $creatorID;
 	$attraction->attractionID = $_POST['attractionID'];
 	$attraction->venueName = $_POST['venueName'];
 	$attraction->name = $_POST['attractionName'];
