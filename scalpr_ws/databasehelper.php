@@ -70,6 +70,54 @@ class Security
      	//$unencodedArray = ['jwt' => $jwt];
 	}
 
+	public static function createPasswordResetToken($mysqli, $userID, $email){
+		$tokenId    = base64_encode(mcrypt_create_iv(32));
+                    $issuedAt   = time();
+                    //$notBefore  = $issuedAt;  //Adding 10 seconds
+                    $expire     = $issuedAt + 3600; // Adding 1 hour
+                    $serverName = 'http://proquoapp.com'; /// set your domain name 
+ 
+  					
+        /*
+         * Create the token as an array
+         */
+        $data = [
+            'iat'  => $issuedAt,         // Issued at: time when the token was generated
+            'jti'  => $tokenId,          // Json Token Id: an unique identifier for the token
+            'iss'  => $serverName,       // Issuer
+            'nbf'  => $issuedAt,        // Not before
+            'exp'  => $expire,           // Expire
+            'data' => [                  // Data related to the logged user you can set your required data
+	    	'id'   => $userID, // id from the users table
+	     	'name' => $email, //  name
+                      ]
+        ];
+
+      	$secretKey = base64_decode(SECRET_KEY);
+      	/// Here we will transform this array into JWT:
+      	$jwt = JWT::encode(
+                $data, //Data to be encoded in the JWT
+                $secretKey, // The signing key
+                 ALGORITHM 
+               ); 
+
+
+      	$timestamp = gmdate("Y-m-d H:i:s");
+      	$insertQuery = 'INSERT INTO PasswordResetTokens VALUES (NULL, ?, ?, ?)';
+
+		$statement = $mysqli->prepare($insertQuery);
+		$statement->bind_param("iss", $userID, $jwt, $timestamp);
+		$statement->execute();
+
+	  	if($statement){
+	  		return $jwt;
+	  	}else{
+	  		return -1;
+	  	}
+
+     	//$unencodedArray = ['jwt' => $jwt];
+	}
+
 	public static function authenticateToken($token){
 		try {
            	$secretKey = base64_decode(SECRET_KEY); 
@@ -102,6 +150,39 @@ class Security
         } catch (Exception $e) {
 				echo "-2";
 				exit(0);
+        }
+	}
+
+	public static function authenticatePasswordResetToken($token){
+		try {
+           	$secretKey = base64_decode(SECRET_KEY); 
+           	$DecodedDataArray = JWT::decode($token, $secretKey, array(ALGORITHM));
+           	//if decode was successful then the code below will run, if not the catch will be called
+
+
+			$mysqli = getDB();
+
+           	$checkQuery = 'SELECT UserID FROM PasswordResetTokens WHERE Token = ?';
+
+			$statement = $mysqli->prepare($checkQuery);
+			$statement->bind_param("s", $token);
+			$statement->execute();
+			$statement->store_result();
+			$statement->bind_result($userID);
+
+			$statement->fetch();
+			$row_count = $statement->num_rows;
+
+			$mysqli->close();
+			
+			if($row_count == 0){
+				return 0;
+			}else{
+				return $userID;
+			}
+
+        } catch (Exception $e) {
+				return -1;
         }
 	}
 
@@ -1406,6 +1487,24 @@ function retrieveSingleUserAndroidDeviceTokens($mysqli, $userID){
 	}
 
 	return $userDeviceTokens;
+}
+
+function validateUserEmail($mysqli, $userEmail){
+	$convoQuery = 'SELECT ID FROM Users WHERE Email = ?';
+
+	$statement = $mysqli->prepare($convoQuery);
+	$statement->bind_param("s", $userEmail);
+	$statement->execute();
+	$statement->store_result();
+	$statement->bind_result($userID);
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	if($row_count > 0){
+		return $userID;
+	}else{
+		return 0;
+	}
 }
 
 ?>
