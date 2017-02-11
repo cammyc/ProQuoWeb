@@ -164,7 +164,7 @@
             <div id="map"></div>
                 <script>
                     var markersArray = [];
-                    var hasCentered = false;
+                    var hasCenteredCount = 0;
 
                     function initMap() {
                         var uluru = {lat: 40.0150, lng: -105.2705};  // LOCATION HERE
@@ -212,8 +212,10 @@
                       };
                       myoverlay.setMap(map);
 
-                    google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
-                        showMarkers(map);
+                    google.maps.event.addDomListener(map, 'bounds_changed', function() {
+                        if(hasCenteredCount < 2){
+                            showMarkers(map);
+                        }
                     });
 
                     google.maps.event.addDomListener(map, 'dragend', function() {
@@ -277,9 +279,9 @@
                                         optimized: false
                                     });
 
-                                    if(!hasCentered){
+                                    if(hasCenteredCount < 2){
                                        map.setCenter({lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])});
-                                       hasCentered = true;
+                                       hasCenteredCount += 1;
                                     }
 
                                     addInfoWindow(marker, attraction);
