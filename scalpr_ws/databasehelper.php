@@ -70,7 +70,7 @@ class Security
      	//$unencodedArray = ['jwt' => $jwt];
 	}
 
-	public static function createPasswordResetToken($mysqli, $userID, $email){
+	public static function createPasswordResetToken($mysqli, $userID, $emailPhone){
 		$tokenId    = base64_encode(mcrypt_create_iv(32));
                     $issuedAt   = time();
                     //$notBefore  = $issuedAt;  //Adding 10 seconds
@@ -89,7 +89,7 @@ class Security
             'exp'  => $expire,           // Expire
             'data' => [                  // Data related to the logged user you can set your required data
 	    	'id'   => $userID, // id from the users table
-	     	'name' => $email, //  name
+	     	'name' => $emailPhone, //  name
                       ]
         ];
 
@@ -933,7 +933,8 @@ function UpdateUserPassword($mysqli, $userID, $password){
 	$query = 'UPDATE Users SET Password = ? WHERE ID = ?';
 
 	$statement = $mysqli->prepare($query);
-	$statement->bind_param("si", password_hash($password, PASSWORD_DEFAULT), $userID);
+	$pw = password_hash($password, PASSWORD_DEFAULT);
+	$statement->bind_param("si", $pw, $userID);
 	$statement->execute();
 
 	if($statement){
@@ -1279,7 +1280,7 @@ function getMinAndroidVersion(){//may eventually have to sepeate this for notifi
 }
 
 function getMiniOSVersion(){
-	return 1.0;
+	return 0.1;
 }
 
 
@@ -1494,6 +1495,24 @@ function validateUserEmail($mysqli, $userEmail){
 
 	$statement = $mysqli->prepare($convoQuery);
 	$statement->bind_param("s", $userEmail);
+	$statement->execute();
+	$statement->store_result();
+	$statement->bind_result($userID);
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	if($row_count > 0){
+		return $userID;
+	}else{
+		return 0;
+	}
+}
+
+function validateUserPhone($mysqli, $userPhone){
+	$convoQuery = 'SELECT ID FROM Users WHERE PhoneNumber = ?';
+
+	$statement = $mysqli->prepare($convoQuery);
+	$statement->bind_param("s", $userPhone);
 	$statement->execute();
 	$statement->store_result();
 	$statement->bind_result($userID);

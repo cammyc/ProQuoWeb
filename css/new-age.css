@@ -280,10 +280,11 @@ section.features .feature-item h3 {
 }
 section.features .feature-item i {
   font-size: 80px;
-  background: -webkit-linear-gradient(to left, #7b4397, #dc2430);
-  background: linear-gradient(to left, #7b4397, #dc2430);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: -webkit-linear-gradient(to left, #a8e0c0, #2ecc71);
+    background: linear-gradient(to left, #a8e0c0, #2ecc71);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 }
 @media (min-width: 992px) {
   section.features .device-container,
@@ -399,10 +400,11 @@ footer ul li a.active {
   padding-left: 0;
 }
 .btn-outline {
-  color: #2ecc71;
-  border-color: #2ecc71;
+  color: #FFF;
+  border-color: #FFF;
   border: 1px solid;
 }
+
 .btn-outline:hover,
 .btn-outline:focus,
 .btn-outline:active,
@@ -411,6 +413,7 @@ footer ul li a.active {
   background-color: white;
   border-color: white;
 }
+
 .btn {
   font-family: 'Lato', 'Helvetica', 'Arial', 'sans-serif';
   text-transform: uppercase;

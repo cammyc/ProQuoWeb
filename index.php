@@ -75,17 +75,32 @@
         <!-- /.container-fluid -->
     </nav>
 
-    <header>
+    <section id="download" class="download bg-primary text-center">
         <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h2 class="section-heading">The easiest way to buy and sell tickets</h2>
+                    <p>Available now on iOS and Android</p>
+                    <div class="badges">
+                        <a class="badge-link" href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en"><img src="img/google-play-badge.svg" alt=""></a>
+                        <a class="badge-link" href="#"><img src="img/app-store-badge.svg" alt=""></a>
+                    </div>
+                    <br>
+                    <center><a class="btn btn-outline btn-xl page-scroll" href="#liveTickets">View Live Tickets Near You</a></center>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="liveTickets" style="padding: 0;">
         <html>
         <head>
                 <style>
                     #map { 
-                    height: 100%;
-                    width: 100%;
-                    left: 0;
-                    position: absolute;
-                    top: 0; 
+                        position: relative;
+                        height: 600px;
+                        width: 100%;
                     }
 
                     #markerLayer img {
@@ -146,88 +161,142 @@
                 </style>
         </head>
         <body>
-                <div id="map"></div>
+            <div id="map"></div>
                 <script>
+                    var markersArray = [];
+                    var hasCentered = false;
+
                     function initMap() {
                         var uluru = {lat: 40.0150, lng: -105.2705};  // LOCATION HERE
                         var map = new google.maps.Map(document.getElementById('map'), {
-                                zoom: 14,
+                                zoom: 13,
+                                minZoom: 12,
                                 scrollwheel: false, //DISABLE MAP SCROLLWHEEL
                                 center: uluru
                             });
 
-                        var myoverlay = new google.maps.OverlayView();
-                          myoverlay.draw = function () {
-                            //this assigns an id to the markerlayer Pane, so it can be referenced by CSS
-                            this.getPanes().markerLayer.id='markerLayer'; 
-                          };
-                          myoverlay.setMap(map);
 
-                        google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
-                            var bounds = map.getBounds();
+                    $.getJSON("http://ipinfo.io", function(ipinfo){
+                        var latLong = ipinfo.loc.split(",");
 
-                                var today = new Date();
-                                var dd = today.getDate();
-                                var mm = today.getMonth()+1; //January is 0!
+                        var pos = new google.maps.LatLng(latLong[0],
+                            latLong[1]);
 
-                                var yyyy = today.getFullYear();
-                                if(dd<10){
-                                    dd='0'+dd;
-                                } 
-                                if(mm<10){
-                                    mm='0'+mm;
-                                } 
-                                var today = yyyy+"-"+mm+"-"+dd;
+                        var infowindow = new google.maps.InfoWindow({
+                                content: 'Your General Location'
+                            });
+                        
+                        var marker = new google.maps.Marker({
+                            position: pos,
+                            map: map,
+                            animation: google.maps.Animation.DROP
+                        });
 
-                                var args = {
-                                    latBoundLeft: bounds.getSouthWest().lat(),
-                                    latBoundRight: bounds.getNorthEast().lat(),
-                                    lonBoundLeft: bounds.getSouthWest().lng(),
-                                    lonBoundRight: bounds.getNorthEast().lng(),
-                                    currentDate: today
-                                };
+                        google.maps.event.addListener(marker, 'mouseover', function() {
+                            infowindow.open(map, this);
+                        });
 
-                                console.log(args);
+                        google.maps.event.addListener(marker, 'mouseout', function() {
+                            infowindow.close();
+                        });
 
-                                var getAttractionsRequest = getAttractions(args);
 
-                                getAttractionsRequest.done(function(result) {
-                                    //console.log(result);
-                                    var attractions = JSON.parse(result);
-                                    
-                                    for(var i = 0; i < attractions.length; i++){
-                                        var attraction = attractions[i];
+                        map.setCenter(pos);
+                    });
+                    
 
-                                       
+                    var myoverlay = new google.maps.OverlayView();
+                      myoverlay.draw = function () {
+                        //this assigns an id to the markerlayer Pane, so it can be referenced by CSS
+                        this.getPanes().markerLayer.id='markerLayer'; 
+                      };
+                      myoverlay.setMap(map);
 
-                                        var icon = {
-                                            url: attraction["imageURL"], // url
-                                            scaledSize: new google.maps.Size(50,50),
-                                            origin: new google.maps.Point(0,0) // origin
-                                        };
+                    google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                        showMarkers(map);
+                    });
 
-                                        var marker = new google.maps.Marker({
-                                            position: {lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])},
-                                            map: map,
-                                            icon: icon,
-                                            optimized: false
-                                        });
+                    google.maps.event.addDomListener(map, 'dragend', function() {
+                        showMarkers(map);
+                    });
 
-                                        addInfoWindow(marker, attraction);
-                                    }
-                                        
+                    google.maps.event.addDomListener(map, 'zoom_changed', function() {
+                        showMarkers(map);
+                    });
 
-                                    }).fail(function (jqXHR, textStatus, errorThrown){
-                                        
+                    }
+
+                    function showMarkers(map){
+                        clearMarkers();
+                        var bounds = map.getBounds();
+
+                            var today = new Date();
+                            var dd = today.getDate();
+                            var mm = today.getMonth()+1; //January is 0!
+
+                            var yyyy = today.getFullYear();
+                            if(dd<10){
+                                dd='0'+dd;
+                            } 
+                            if(mm<10){
+                                mm='0'+mm;
+                            } 
+                            var today = yyyy+"-"+mm+"-"+dd;
+
+                            var args = {
+                                latBoundLeft: bounds.getSouthWest().lat(),
+                                latBoundRight: bounds.getNorthEast().lat(),
+                                lonBoundLeft: bounds.getSouthWest().lng(),
+                                lonBoundRight: bounds.getNorthEast().lng(),
+                                currentDate: today
+                            };
+
+                            console.log(args);
+
+                            var getAttractionsRequest = getAttractions(args);
+
+                            getAttractionsRequest.done(function(result) {
+                                //console.log(result);
+                                var attractions = JSON.parse(result);
+                                
+                                for(var i = 0; i < attractions.length; i++){
+                                    var attraction = attractions[i];
+
+                                   
+
+                                    var icon = {
+                                        url: attraction["imageURL"], // url
+                                        scaledSize: new google.maps.Size(50,50),
+                                        origin: new google.maps.Point(0,0) // origin
+                                    };
+
+                                    var marker = new google.maps.Marker({
+                                        position: {lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])},
+                                        map: map,
+                                        icon: icon,
+                                        optimized: false
                                     });
 
-                            
-                        });
+                                    if(!hasCentered){
+                                       map.setCenter({lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])});
+                                       hasCentered = true;
+                                    }
 
-                        var marker = new google.maps.Marker({
-                            position: uluru,
-                            map: map
-                        });
+                                    addInfoWindow(marker, attraction);
+                                }
+                                    
+
+                                }).fail(function (jqXHR, textStatus, errorThrown){
+                                    
+                                });
+                    }
+
+
+                    function clearMarkers() {
+                      for (var i = 0; i < markersArray.length; i++ ) {
+                        markersArray[i].setMap(null);
+                      }
+                      markersArray.length = 0;
                     }
 
                     function addInfoWindow(marker, attraction) {
@@ -268,7 +337,10 @@
                         marker.addListener('click', function() {
                           infowindow.open(marker.get('map'), marker);
                         });
+
+                        markersArray.push(marker);
                     }
+
 
                     function getAttractions(args){
 
@@ -282,30 +354,12 @@
                         });
 
                     }
-                </script>
-            <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAofWSHIjQOsTzKw_2fbSs-gNE5mp1sIBQ&callback=initMap">
-        </script>
-    </body>
-</html>
-    
-</div>
-</div>
-</header>
 
-    <section id="download" class="download bg-primary text-center">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <h2 class="section-heading">The easiest way to buy and sell tickets</h2>
-                    <p>Available now on iOS and Android</p>
-                    <div class="badges">
-                        <a class="badge-link" href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en"><img src="img/google-play-badge.svg" alt=""></a>
-                        <a class="badge-link" href="#"><img src="img/app-store-badge.svg" alt=""></a>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </script>
+                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAofWSHIjQOsTzKw_2fbSs-gNE5mp1sIBQ&callback=initMap">
+                </script>
+        </body>
+        </html>   
     </section>
 
     <section id="features" class="features">
@@ -347,7 +401,7 @@
                                 <div class="feature-item">
                                     <i class="icon-call-in text-primary"></i>
                                     <h3>Simple Connections</h3>
-                                    <p class="text-muted">Connect with other ProQuo users over text or email.</p>
+                                    <p class="text-muted">Contact other ProQuo users with our in app messaging.</p>
                                 </div>
                             </div>
                         </div>

@@ -2,14 +2,14 @@
 	include_once("scalpr_ws/databasehelper.php");
 	$token = urldecode($_GET['token']);
 
-	$result = Security::authenticatePasswordResetToken($token);
+	$userID = Security::authenticatePasswordResetToken($token);
 
-	if($result > 0){
-		echo "lets reset that password!";
-	}else if ($result == 0){
-		echo "token not found";
+	if($userID > 0){
+		include("validToken.html");
+	}else if ($userID == 0){
+		include("invalidToken.html");
 	}else{
-		echo "invalid token";
+		include("invalidToken.html");
 	}
 
 ?>
