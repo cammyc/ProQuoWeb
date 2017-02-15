@@ -1321,7 +1321,6 @@ function updateIOSDeviceToken($mysqli, $userID, $deviceToken){
 	  	}
 	}else{
 
-		$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
 		$timestamp = gmdate("Y-m-d H:i:s");
 
 

@@ -149,7 +149,7 @@ header {
   min-height: auto;
   overflow-y: hidden;
   overflow-x: hidden;
-  /*background: url("../img/background.png") no-repeat center center; */
+  background: url("../img/background.png") no-repeat center center; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -220,33 +220,35 @@ section {
 section h2 {
   font-size: 50px;
 }
-section.download {
-  padding: 150px 0;
+.download {
+  /*padding: 150px 0;*/
   position: relative;
+  padding-bottom: 25px;
+  padding-top: 75px;
 }
-section.download h2 {
+.download h2 {
   margin-top: 0;
-  font-size: 50px;
+  font-size: 40px;
 }
-section.download .badges .badge-link {
+.download .badges .badge-link {
   display: block;
   margin-bottom: 25px;
 }
-section.download .badges .badge-link:last-child {
+.download .badges .badge-link:last-child {
   margin-bottom: 0;
 }
-section.download .badges .badge-link img {
-  height: 60px;
+.download .badges .badge-link img {
+  height: 45px;
 }
 @media (min-width: 768px) {
-  section.download .badges .badge-link {
+  .download .badges .badge-link {
     display: inline-block;
     margin-bottom: 0;
   }
 }
 @media (min-width: 768px) {
-  section.download h2 {
-    font-size: 70px;
+  .download h2 {
+    font-size: 40px;
   }
 }
 section.features .section-heading {
@@ -421,7 +423,7 @@ footer ul li a.active {
   border-radius: 300px;
 }
 .btn-xl {
-  padding: 15px 45px;
+  /*padding: 15px 45px;*/
   font-size: 11px;
 }
 ::-moz-selection {
