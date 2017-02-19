@@ -29,8 +29,11 @@
 				$imageType = ".gif";
 			}
 
-			$filePath = "gs://attraction-images/".$attraction->attractionID.$imageType;
-			unlink($filePath);
+			//$filePath = "gs://attraction-images/".$attraction->attractionID.$imageType;
+			//unlink($filePath);
+
+			$filePath = "gs://attraction-images/".$attraction->attractionID."_".urlencode($attraction->imageURL).$imageType;
+			unlink($filePath); //just do avoid duplicates, will throw warning if not found
 
 			$options = ['gs' => ['acl' => 'public-read']];
 			$context = stream_context_create($options);
