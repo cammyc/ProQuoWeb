@@ -16,6 +16,7 @@
 	$attraction->imageURL = $_POST['imageURL'];
 	$attraction->lat = $_POST['lat'];
 	$attraction->lon = $_POST['lon'];
+	$attraction->postType = (!empty($_POST['postType'])) ? $_POST['postType'] : 1; //1 is selling, 2 is requesting, default to 1
 
 
 		$mysqli = getDB();

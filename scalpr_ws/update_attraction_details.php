@@ -14,6 +14,8 @@
 	$attraction->description = $_POST['description'];
 	$attraction->date = $_POST['date'];
 	$attraction->imageURL = $_POST['imageURL'];
+	$attraction->postType = (!empty($_POST['postType'])) ? $_POST['postType'] : 1; //1 is selling, 2 is requesting, default to 1
+
 
 	
 

@@ -232,6 +232,7 @@ class Attraction
 	public $lat;
 	public $lon;
 	public $timeStamp;
+	public $postType;
 }
 
 class Conversation
@@ -273,6 +274,17 @@ class UserDeviceToken
 	public $userID;
 	public $deviceToken;
 	//public $deviceType //$deviceType -> 1 = android, 2 = iOS
+}
+
+class Filters
+{
+	public $startDate;
+	public $endDate;
+	public $showRequested;
+	public $showSelling;
+	public $priceMin;
+	public $priceMax;
+	public $numTickets;
 }
 
 // class Security {
@@ -552,9 +564,9 @@ function postAttraction($mysqli, $attraction){
 	$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
 	$timestamp = gmdate("Y-m-d H:i:s");
 
-	$query = 'INSERT INTO Attractions VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)';
+	$query = 'INSERT INTO Attractions VALUES(NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)';
 	$statement = $mysqli->prepare($query);
-	$statement->bind_param("issdisssdds", $attraction->creatorID, $attraction->venueName, $attraction->name, $attraction->ticketPrice, $attraction->numTickets, $attraction->description, $mysqlDateFormat, $attraction->imageURL, $attraction->lat, $attraction->lon, $timestamp);
+	$statement->bind_param("issdisssddsi", $attraction->creatorID, $attraction->venueName, $attraction->name, $attraction->ticketPrice, $attraction->numTickets, $attraction->description, $mysqlDateFormat, $attraction->imageURL, $attraction->lat, $attraction->lon, $timestamp, $attraction->postType);
 	$statement->execute();
 
 	if($statement){
@@ -570,10 +582,10 @@ function updateAttractionDetails($mysqli, $attraction){
 	$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
 
 
-	$query = 'UPDATE Attractions SET VenueName = ?, Name = ?, TicketPrice = ?, NumberOfTickets = ?, Description = ?, Date = ?, ImageURL = ? WHERE ID = ? AND CreatorID = ?';
+	$query = 'UPDATE Attractions SET VenueName = ?, Name = ?, TicketPrice = ?, NumberOfTickets = ?, Description = ?, Date = ?, ImageURL = ?, PostType = ? WHERE ID = ? AND CreatorID = ?';
 
 	$statement = $mysqli->prepare($query);
-	$statement->bind_param("ssdisssii", $attraction->venueName, $attraction->name, $attraction->ticketPrice, $attraction->numTickets, $attraction->description, $mysqlDateFormat, $attraction->imageURL, $attraction->attractionID, $attraction->creatorID);
+	$statement->bind_param("ssdisssiii", $attraction->venueName, $attraction->name, $attraction->ticketPrice, $attraction->numTickets, $attraction->description, $mysqlDateFormat, $attraction->imageURL, $attraction->postType, $attraction->attractionID, $attraction->creatorID);
 	$statement->execute();
 
 	if($statement){
@@ -672,7 +684,7 @@ function getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $
 
 	//$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $date)));
 
-	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?) AND ISNULL(DeletedByUserID)';
+	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?) AND ISNULL(DeletedByUserID)';
 	$statement = $mysqli->prepare($query);
 
 	$statement->bind_param("dddds", $minLat,$maxLat,$minLon,$maxLon, $date);
@@ -696,6 +708,7 @@ function getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $
 		$a->lat = $row[9];
 		$a->lon = $row[10];
 		$a->timestamp = $row[11];
+		$a->postType = $row[12];
 
 		$attractions[$i] = $a;
 		$i++;
@@ -737,7 +750,7 @@ function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft
 
 	$idQuery = (sizeof($IDs) > 0) ? 'AND ('.implode(" AND ", $IDs).')' : '';
 
-	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?)  AND ISNULL(DeletedByUserID) '.$idQuery.' '.$searchTerm.'';
+	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?)  AND ISNULL(DeletedByUserID) '.$idQuery.' '.$searchTerm.'';
 
 	$statement = $mysqli->prepare($query);
 
@@ -769,6 +782,7 @@ function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft
 		$a->lat = $row[9];
 		$a->lon = $row[10];
 		$a->timestamp = $row[11];
+		$a->postType = $row[12];
 
 		$attractions[$i] = $a;
 		$i++;
@@ -790,7 +804,7 @@ function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft
 
 function getUserAttractions($mysqli, $userID, $currentDate){
 
-	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp FROM Attractions WHERE CreatorID = ? AND Date >= ?  AND ISNULL(DeletedByUserID) Order By Date';
+	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE CreatorID = ? AND Date >= ?  AND ISNULL(DeletedByUserID) Order By Date';
 	$statement = $mysqli->prepare($query);
 
 	$statement->bind_param("is", $userID, $currentDate);
@@ -814,6 +828,7 @@ function getUserAttractions($mysqli, $userID, $currentDate){
 		$a->lat = $row[9];
 		$a->lon = $row[10];
 		$a->timestamp = $row[11];
+		$a->postType = $row[12];
 
 		$attractions[$i] = $a;
 		$i++;
