@@ -7,13 +7,29 @@
 	$lonBoundRight = $_POST['lonBoundRight'];
 	$currentDate = $_POST['currentDate'];
 
+	$mysqli = getDB();
 
 
-		$mysqli = getDB();
+	if(!empty($_POST['filters'])){ //will be empty on phones that havent been updated
 
-		echo json_encode(getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate));
+		$filter = new Filters();
+		$filter->startDate = $_POST['filters']['startDate'];
+		$filter->endDate = $_POST['filters']['endDate'];
+		$filter->showRequested = $_POST['filters']['requestedTickets'];
+		$filter->showSelling = $_POST['filters']['sellingTickets'];
+		$filter->minPrice = $_POST['filters']['minPrice'];
+		$filter->maxPrice = $_POST['filters']['maxPrice'];
+		$filter->numTickets = $_POST['filters']['numTickets'];
 
-		$mysqli->close();
+		echo json_encode(getAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate));
+
+	}else{//below is executed on phones that haven't updated app, still need to update getNewAttractions function
+
+		echo json_encode(getAttractions($mysqli, null, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate));
+
+	}
+
+	$mysqli->close();
 
 	
 ?>

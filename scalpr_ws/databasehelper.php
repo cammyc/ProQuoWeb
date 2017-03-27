@@ -282,8 +282,8 @@ class Filters
 	public $endDate;
 	public $showRequested;
 	public $showSelling;
-	public $priceMin;
-	public $priceMax;
+	public $minPrice;
+	public $maxPrice;
 	public $numTickets;
 }
 
@@ -659,7 +659,7 @@ function getAttractionImage($mysqli, $attractionID){
 	return $imageURL;
 }
 
-function getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $date){
+function getAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $date){
 	$minLat = 0;
 	$maxLat = 0;
 
@@ -684,10 +684,53 @@ function getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $
 
 	//$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $date)));
 
-	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?) AND ISNULL(DeletedByUserID)';
-	$statement = $mysqli->prepare($query);
+	$query = null;
+	$statement = null;
 
-	$statement->bind_param("dddds", $minLat,$maxLat,$minLon,$maxLon, $date);
+	if($filter != null){
+
+		$dateFilter = '(Date Between ? AND ?)'; //?1 = startDate, ?2 = endDate
+
+		$postType = null;
+
+		if($filter->showRequested && $filter->showSelling){
+			$postType = '(PostType > 0)';
+		}else if(!$filter->showRequested){
+			//show selling only so type = 1
+			$postType = '(PostType = 1)';
+		}else{
+			//show requested only
+			$postType = '(PostType = 2)';
+		}
+
+		$priceFilter = '(TicketPrice Between ? AND ?)';// ?1 = min price, ?2 = max price
+
+		$numTicketsFilter = null;
+
+		if($filter->numTickets == -1){
+			$numTicketsFilter = "(NumberOfTickets > ?)";// ? = 0
+			$filter->numTickets = 0;
+		}else if($filter->numTickets == 4){
+			$numTicketsFilter = "(NumberOfTickets >= ?)";// ? = 4
+			$filter->numTickets = 4;
+		}else{
+			$numTicketsFilter = "(NumberOfTickets = ?)";
+		}
+
+		$finalFilterString = ' AND '.$dateFilter.' AND '.$postType.' AND '.$priceFilter.' AND '.$numTicketsFilter;
+
+
+		$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND ISNULL(DeletedByUserID)'.$finalFilterString;
+
+		$statement = $mysqli->prepare($query);
+		$statement->bind_param("ddddssiii", $minLat,$maxLat,$minLon,$maxLon, $filter->startDate, $filter->endDate, $filter->minPrice, $filter->maxPrice, $filter->numTickets);
+	}else{
+		$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?) AND ISNULL(DeletedByUserID)';
+
+		$statement = $mysqli->prepare($query);
+		$statement->bind_param("dddds", $minLat,$maxLat,$minLon,$maxLon, $date);
+	}
+
 	$statement->execute();
 	$result = $statement->get_result();
 
@@ -720,7 +763,7 @@ function getAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $
 	
 }
 
-function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $date, $IDs, $searchViewQuery){
+function getNewAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $date, $IDs, $searchViewQuery){
 	$minLat = 0;
 	$maxLat = 0;
 
@@ -747,18 +790,77 @@ function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft
 
 	//$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $date)));
 
-
 	$idQuery = (sizeof($IDs) > 0) ? 'AND ('.implode(" AND ", $IDs).')' : '';
 
-	$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?)  AND ISNULL(DeletedByUserID) '.$idQuery.' '.$searchTerm.'';
-
-	$statement = $mysqli->prepare($query);
-
 	if(!empty($searchViewQuery)){
-		$param = "%{$searchViewQuery}%";
-		$statement->bind_param("ddddsss", $minLat,$maxLat,$minLon,$maxLon, $date, $param, $param);
+		$maxLat += 0.5;
+		$minLat -= 0.5;
+		$maxLon += 0.5;
+		$minLon -= 0.5;
+	}
+
+	$query = null;
+	$statement = null;
+
+	if($filter != null){
+
+		$dateFilter = '(Date Between ? AND ?)'; //?1 = startDate, ?2 = endDate
+
+		$postType = null;
+
+		if($filter->showRequested && $filter->showSelling){
+			$postType = '(PostType > 0)';
+		}else if(!$filter->showRequested){
+			//show selling only so type = 1
+			$postType = '(PostType = 1)';
+		}else{
+			//show requested only
+			$postType = '(PostType = 2)';
+		}
+
+		$priceFilter = '(TicketPrice Between ? AND ?)';// ?1 = min price, ?2 = max price
+
+		$numTicketsFilter = null;
+
+		if($filter->numTickets == -1){
+			$numTicketsFilter = "(NumberOfTickets > ?)";// ? = 0
+			$filter->numTickets = 0;
+		}else if($filter->numTickets == 4){
+			$numTicketsFilter = "(NumberOfTickets >= ?)";// ? = 4
+			$filter->numTickets = 4;
+		}else{
+			$numTicketsFilter = "(NumberOfTickets = ?)";
+		}
+
+		$finalFilterString = ' AND '.$dateFilter.' AND '.$postType.' AND '.$priceFilter.' AND '.$numTicketsFilter;
+
+		$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND ISNULL(DeletedByUserID) '.$finalFilterString.' '.$idQuery.' '.$searchTerm.'';
+
+		$statement = $mysqli->prepare($query);
+
+		syslog(LOG_INFO, $query);//printing twice, not working
+
+
+		if(!empty($searchViewQuery)){
+			$param = "%{$searchViewQuery}%";
+			$statement->bind_param("ddddssiiiss", $minLat,$maxLat,$minLon,$maxLon, $filter->startDate, $filter->endDate, $filter->minPrice, $filter->maxPrice, $filter->numTickets, $param, $param);
+		}else{
+			$statement->bind_param("ddddssiii", $minLat,$maxLat,$minLon,$maxLon, $filter->startDate, $filter->endDate, $filter->minPrice, $filter->maxPrice, $filter->numTickets);
+		}
+
 	}else{
-		$statement->bind_param("dddds", $minLat,$maxLat,$minLon,$maxLon, $date);
+
+		$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE (Lat Between ? AND ?) AND (Lon Between ? AND ?) AND (Date >= ?) AND ISNULL(DeletedByUserID) '.$idQuery.' '.$searchTerm.'';
+
+		$statement = $mysqli->prepare($query);
+
+		if(!empty($searchViewQuery)){
+			$param = "%{$searchViewQuery}%";
+			$statement->bind_param("ddddsss", $minLat,$maxLat,$minLon,$maxLon, $date, $param, $param);
+		}else{
+			$statement->bind_param("dddds", $minLat,$maxLat,$minLon,$maxLon, $date);
+		}
+
 	}
 
 	$statement->execute();
@@ -790,15 +892,7 @@ function getNewAttractions($mysqli, $latBoundLeft, $latBoundRight, $lonBoundLeft
 
 	$statement->close();
 
-	if(sizeof($attractions) < 3){
-		if(($maxLat - $minLat) < 1){
-			return getNewAttractions($mysqli, $maxLat + 0.5, $minLat - 0.5, $maxLon + 0.5, $minLon - 0.5, $date, $IDs, $searchViewQuery);
-		}else{
-			return $attractions;
-		}
-	}else{
-		return $attractions;
-	}
+	return $attractions;
 }
 
 
