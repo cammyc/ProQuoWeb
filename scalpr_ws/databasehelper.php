@@ -248,6 +248,7 @@ class Conversation
 	public $creationTimestamp;
 	public $attractionImageURL;
 	public $isLastMessageRead;
+	public $postType;
 }
 
 class Message
@@ -1114,7 +1115,7 @@ function getUserConversations($mysqli, $userID){//currentDate is not needed
 				WHEN Message.SenderID = ? THEN TRUE
 				WHEN IFNULL((SELECT LastReadMessage.MessageID FROM Scalpr.LastReadMessage WHERE ConversationID = Conversations.ID AND UserID = ? ORDER BY LastReadMessage.MessageID DESC LIMIT 1), -1) != Message.ID THEN FALSE
 			    ELSE TRUE
-			    END as isLastMessageRead
+			    END as isLastMessageRead, A.PostType
 				FROM Scalpr.Conversations
 				LEFT JOIN Scalpr.Messages as Message on Message.ConversationID = Conversations.ID AND Message.ID = (SELECT ID FROM Scalpr.Messages WHERE Messages.ConversationID = Conversations.ID ORDER BY ID DESC LIMIT 1 )
 				LEFT JOIN Scalpr.Users as U1 on U1.ID = Conversations.BuyerID
@@ -1153,6 +1154,7 @@ function getUserConversations($mysqli, $userID){//currentDate is not needed
 		$c->creationTimestamp = $row[11];
 		$c->attractionImageURL = $row[12];
 		$c->isLastMessageRead = $row[13];
+		$c->postType = $row[14];
 
 		$conversations[$i] = $c;
 		$i++;
