@@ -17,7 +17,7 @@ if($userID > 0){
 	$token = Security::createPasswordResetToken($mysqli, $userID, $emailPhone);
 
 	if($token != -1){
-		$link = 'www.proquoapp.com/resetPassword.php?token='.urlencode($token).'';
+		$link = 'www.belivetickets.com/resetPassword.php?token='.urlencode($token).'';
 
 		if(!$isEmail){
 	
@@ -42,7 +42,7 @@ if($userID > 0){
 		                'from' => "+17209999644", 
 		                
 		                // the sms body
-		                'body' => "Please follow the link to reset your ProQuo password - ".$link
+		                'body' => "Please follow the link to reset your BeLive password - ".$link
 		            )
 		        );
 
@@ -51,7 +51,7 @@ if($userID > 0){
 		}else{
 			try {
 			    $message = new Message();
-			    $message->setSender('ProQuo@scalpr-143904.appspotmail.com');
+			    $message->setSender('BeLive@scalpr-143904.appspotmail.com');
 			    $message->addTo($emailPhone);
 			    $message->setSubject('Password Reset - Do Not Reply');
 

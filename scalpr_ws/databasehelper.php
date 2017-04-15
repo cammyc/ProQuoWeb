@@ -839,7 +839,7 @@ function getNewAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lon
 
 		$statement = $mysqli->prepare($query);
 
-		syslog(LOG_INFO, $query);//printing twice, not working
+		//syslog(LOG_INFO, $query);//printing twice, not working
 
 
 		if(!empty($searchViewQuery)){
@@ -1387,11 +1387,11 @@ function updateLastNotifiedMessage($mysqli, $messageID, $conversationID, $userID
 }
 
 function getMinAndroidVersion(){//may eventually have to sepeate this for notifications if want user to get notifications when update isn't concerning messages
-	return 0.1;
+	return 2.0;
 }
 
 function getMiniOSVersion(){
-	return 0.1;
+	return 2.0;
 }
 
 

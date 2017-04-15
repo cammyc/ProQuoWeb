@@ -26,6 +26,21 @@
 
 		echo json_encode(getNewAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate, $idArray, $searchViewQuery));
 
+	}else if(!empty($_POST['jsonFilters'])){//android
+
+		$filterArray = json_decode($_POST['jsonFilters']);
+
+		$filter = new Filters();
+		$filter->startDate = $filterArray->{'startDate'};
+		$filter->endDate = $filterArray->{'endDate'};
+		$filter->showRequested = (strcasecmp($filterArray->{'requestedTickets'}, "true") == 0) ? true : false;
+		$filter->showSelling = (strcasecmp($filterArray->{'sellingTickets'}, "true") == 0) ? true : false;
+		$filter->minPrice = $filterArray->{'minPrice'};
+		$filter->maxPrice = $filterArray->{'maxPrice'};
+		$filter->numTickets = $filterArray->{'numTickets'};
+
+		echo json_encode(getNewAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate, $idArray, $searchViewQuery));
+
 	}else{//below is executed on phones that haven't updated app, still need to update getNewAttractions function
 
 		echo json_encode(getNewAttractions($mysqli, null, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $currentDate, $idArray, $searchViewQuery));
