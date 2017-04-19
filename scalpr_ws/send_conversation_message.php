@@ -19,10 +19,19 @@
 
 		if($messages != 0){//this should always be true because user just sent a message
 			$messages = json_encode($messages);
-			$iOSTask = new PushTask('/scalpr_ws/iphone_notification_task_handler.php', ["messages" => $messages, "userID" => $userToReceiveNotificationsID]);
+
+			$tokens = retrieveSingleUserIOSDeviceTokens($mysqli, $userToReceiveNotificationsID);
+
+			for($k = 0; $k < sizeof($tokens); $k++){//in case of invalid token, it wont prevent all devices from getting notified
+				$token = $tokens[$k];
+
+				$iOSTask = new PushTask('/scalpr_ws/iphone_notification_task_handler.php', ["messages" => $messages, "userID" => $userToReceiveNotificationsID, "token" => $token->deviceToken]);
+
+				$task_name_iOS = $iOSTask->add("queue-iphone-notif");
+			}
+
 			$androidTask = new PushTask('/scalpr_ws/android_notification_task_handler.php', ["messages" => $messages, "userID" => $userToReceiveNotificationsID]);
 
-			$task_name_iOS = $iOSTask->add("queue-iphone-notif");
 			$task_name_android = $androidTask->add("queue-android-notif");
 		}
 
