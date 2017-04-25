@@ -660,6 +660,34 @@ function getAttractionImage($mysqli, $attractionID){
 	return $imageURL;
 }
 
+function getSingleAttraction($mysqli, $attractionID){
+		$query = 'SELECT ID, CreatorID, VenueName, Name, TicketPrice, NumberOfTickets, Description, Date, ImageURL, Lat, Lon, Timestamp, PostType FROM Attractions WHERE ID = ?';
+		//$titleQuery = 'SELECT CONCAT(U.FirstName, " ", U.LastName) as SellerName FROM Scalpr.Attractions LEFT JOIN Scalpr.Users as U ON Attractions.CreatorID = U.ID WHERE Attractions.ID = ?';
+		$statement = $mysqli->prepare($query);
+		$statement->bind_param("i", $attractionID);
+		$statement->execute();
+		$result = $statement->get_result();
+
+		$row = $result->fetch_array(MYSQLI_NUM);
+
+		$a = new Attraction();
+		$a->attractionID = $row[0];
+		$a->creatorID = $row[1];
+		$a->venueName = $row[2];
+		$a->name = $row[3];
+		$a->ticketPrice = $row[4];
+		$a->numTickets = $row[5];
+		$a->description = $row[6];
+		$a->date = $row[7];
+		$a->imageURL = $row[8];
+		$a->lat = $row[9];
+		$a->lon = $row[10];
+		$a->timestamp = $row[11];
+		$a->postType = $row[12];
+
+		return $a;
+}
+
 function getAttractions($mysqli, $filter, $latBoundLeft, $latBoundRight, $lonBoundLeft, $lonBoundRight, $date){
 	$minLat = 0;
 	$maxLat = 0;
@@ -1053,6 +1081,21 @@ function UpdateUserPassword($mysqli, $userID, $password){
   	}else{
     	return 0;
   	}
+}
+
+function ConvoCreatedCheck($mysqli, $attractionID, $buyerID){
+	$convoQuery = 'SELECT ID FROM Conversations WHERE AttractionID = ? AND BuyerID = ? AND ISNULL(UserIDDeleted)';
+
+	$statement = $mysqli->prepare($convoQuery);
+	$statement->bind_param("ii", $attractionID, $buyerID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	$created = ($row_count > 0) ? true : false;
+
+	return $created;
 }
 
 function CreateConversation($mysqli, $attractionID, $buyerID, $attractionName){
