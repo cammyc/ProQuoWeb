@@ -1,7 +1,13 @@
 <?php
+	require_once '../databasehelper.php';
+	require_once '../vendor/autoload.php';
+	\Stripe\Stripe::setApiKey("sk_test_dQa2CvZAK2mnz9htGXiAyo4w");
+
+	$userID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+
+
 	try {
-	  $customer_id = "..."; // Load the Stripe Customer ID for your logged in user
-	  $customer = \Stripe\Customer::retrieve($customer_id);
+	  $customer = \Stripe\Customer::retrieve($userID);
 	  header('Content-Type: application/json');
 	  echo $customer->jsonSerialize();
 	} catch(\Stripe\Error $e) {

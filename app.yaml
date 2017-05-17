@@ -6,6 +6,9 @@ handlers:
 - url: /
   script: index.html
 
+- url: /Posts/
+  script: Posts/index.php
+
 - url: /(.+\.html)$
   script: \1
 
