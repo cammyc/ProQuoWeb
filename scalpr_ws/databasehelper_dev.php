@@ -562,6 +562,100 @@ function loginCheck($mysqli,$emailPhone, $password){
 	}	
 }
 
+function connectGoogleAccount($mysqli, $userID, $googleID, $displayPicURL){
+
+	$checkQuery = 'SELECT ID FROM Scalpr.Users WHERE GoogleID = ?';
+
+	$statement = $mysqli->prepare($checkQuery);
+	$statement->bind_param("s", $googleID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+	$statement->close();
+
+	if($row_count > 0){
+		return -1;
+	}else{
+		$checkQuery = 'SELECT DisplayPicURL FROM Users WHERE ID = ?';
+		$statement = $mysqli->prepare($checkQuery);
+		$statement->bind_param("i", $userID);
+		$statement->execute();
+		$statement->store_result();
+		$statement->bind_result($oldDisplayPic);
+		$statement->fetch();
+		$statement->close();
+
+		if(!empty($oldDisplayPic)){
+			$query = 'UPDATE Users SET GoogleID = ? WHERE ID = ?';
+
+			$statement = $mysqli->prepare($query);
+			$statement->bind_param("si", $googleID, $userID);
+		}else{
+			$query = 'UPDATE Users SET GoogleID = ?, DisplayPicURL = ? WHERE ID = ?';
+
+			$statement = $mysqli->prepare($query);
+			$statement->bind_param("ssi", $googleID, $displayPicURL, $userID);
+		}
+
+		$statement->execute();
+
+		if($statement){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+
+}
+
+function connectFacebookAccount($mysqli, $userID, $facebookID){
+
+	$checkQuery = 'SELECT ID FROM Scalpr.Users WHERE FacebookID = ?';
+
+	$statement = $mysqli->prepare($checkQuery);
+	$statement->bind_param("s", $facebookID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+	$statement->close();
+
+	if($row_count > 0){
+		return -1;
+	}else{
+		$checkQuery = 'SELECT DisplayPicURL FROM Users WHERE ID = ?';
+		$statement = $mysqli->prepare($checkQuery);
+		$statement->bind_param("i", $userID);
+		$statement->execute();
+		$statement->store_result();
+		$statement->bind_result($oldDisplayPic);
+		$statement->fetch();
+		$statement->close();
+
+		if(!empty($oldDisplayPic)){
+			$query = 'UPDATE Users SET FacebookID = ? WHERE ID = ?';
+
+			$statement = $mysqli->prepare($query);
+			$statement->bind_param("si", $facebookID, $userID);
+		}else{
+			$query = 'UPDATE Users SET FacebookID = ?, DisplayPicURL = ? WHERE ID = ?';
+
+			$statement = $mysqli->prepare($query);
+			$statement->bind_param("ssi", $facebookID, 'https://graph.facebook.com/'.$facebookID.'/picture', $userID);
+		}
+
+		$statement->execute();
+
+		if($statement){
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+
+}
+
 function postAttraction($mysqli, $attraction){
 	$mysqlDateFormat = date('Y-m-d', strtotime(str_replace('-', '/', $attraction->date)));
 	$timestamp = gmdate("Y-m-d H:i:s");
@@ -966,7 +1060,7 @@ function getUserAttractions($mysqli, $userID, $currentDate){
 
 function getUserDetails($mysqli, $userID){
 
-	$query = 'SELECT ID, FirstName, LastName, Email, PhoneNumber, Password, DisplayPicURL FROM Users WHERE ID = ?';
+	$query = 'SELECT ID, FirstName, LastName, Email, PhoneNumber, Password, DisplayPicURL, FacebookID, GoogleID FROM Users WHERE ID = ?';
 
 	$statement = $mysqli->prepare($query);
 
@@ -986,6 +1080,12 @@ function getUserDetails($mysqli, $userID){
 	      	$u->phoneNumber = $row[4];
 	      	$u->password = $row[5];
 	      	$u->displayPicURL = $row[6];
+	      	$u->facebookID = $row[7];
+	      	$u->googleID = $row[8];
+
+	      	if (strpos($u->displayPicURL, 'graph.facebook.com') !== false) {
+			    $u->displayPicURL = $u->displayPicURL."?width=400&height=400";
+			}
 
 		return $u;
 	}else{

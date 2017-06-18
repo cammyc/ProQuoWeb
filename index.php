@@ -1,542 +1,230 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>BeLive</title>
+        <meta name="description" content="Access a community of people all trying to buy, sell, and request tickets to local events.">
+        <meta name="keywords" content="belive,ticket,event,buy,sell,request,attraction,concert,sports,stadium,venue,song, proquo">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<head>
+        <!-- Open Graph data -->
+        <meta property="og:title" content="BeLive - Buy, Sell, Request Tickets" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="<?php echo 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" />
+        <meta property="og:image" content="http://belivetickets.com/images/iphone.png" />
+        <meta property="og:description" content="Access a community of people all trying to buy, sell, and request tickets to local events." />
+        <meta property="og:site_name" content="BeLive" />
+        <meta property="og:locale" content="en_US" />
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+        <!-- Twitter card -->
+        <meta name="twitter:site" content="@wulkanocom">
+        <meta name="twitter:title" content="BeLiveTickets">
+        <meta name="twitter:description" content="Access a community of people all trying to buy, sell, and request tickets to local events.">
 
-    <title>ProQuo</title>
+        <!-- Favicons -->
+        <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet"/>
+        <link rel="shortcut icon" href="./favicon.ico">
+        <link rel="apple-touch-icon" href="./images/favicon/icon-128.png">
+        <link rel="icon" href="./images/favicon/icon-32.png" sizes="32x32">
+        <link rel="shortcut icon" sizes="196x196" href="./images/favicon/icon-256.png">
+        <link rel="icon" type="image/png" href="./images/favicon/icon-256.png" sizes="196x196" />
+        <link rel="icon" type="image/png" href="./images/favicon/icon-128.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="./images/favicon/icon-32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="./images/favicon/icon-16.png" sizes="16x16" />
+        <link rel="icon" type="image/png" href="./images/favicon/icon-128.png" sizes="128x128" />
+        <link rel="mask-icon" href="./images/favicon/BeLive.svg">
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-
-    <!-- Bootstrap Core CSS -->
-    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Muli" rel="stylesheet">
-
-    <!-- Plugin CSS -->
-    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="vendor/simple-line-icons/css/simple-line-icons.css">
-    <link rel="stylesheet" href="vendor/device-mockups/device-mockups.min.css">
-
-    <!-- Theme CSS -->
-    <link href="css/new-age.css" rel="stylesheet">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- google analytics -->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-91903725-1', 'auto');
-      ga('send', 'pageview');
-    </script>
-
-    <!-- Facebook Pixel Code -->
-    <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1281037498628845'); // Insert your pixel ID here.
-    fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1281037498628845&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- DO NOT MODIFY -->
-    <!-- End Facebook Pixel Code -->
+        <link rel="stylesheet" href="styles/main-d051fc7d2d.css">
+        <link rel="canonical" href="<?php echo 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>" />
 
 
-</head>
+        <!-- JQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 
-<body id="page-top">
+        <!-- google analytics -->
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
-                </button>
+          ga('create', 'UA-91903725-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+
+        <!-- Facebook Pixel Code -->
+        <script>
+        !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+        n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+        document,'script','https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '1281037498628845'); // Insert your pixel ID here.
+        fbq('track', 'PageView');
+        </script>
+        <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1281037498628845&ev=PageView&noscript=1"
+        /></noscript>
+        <!-- DO NOT MODIFY -->
+        <!-- End Facebook Pixel Code -->
+
+    </head>
+    <body>
+
+        <!-- BeLive Site Header -->
+        <header class="header">
+          <div class="header-animation"></div>
+          <div class="site-header container">
+            <a href="./" class="logo">
+              <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                   width="120px" height="52px" viewBox="0 0 80 32" enable-background="new 0 0 80 32" xml:space="preserve">
+                <title>BeLive-logo</title>
+                <defs>
+                  <style type="text/css">
+                    @import url('https://fonts.googleapis.com/css?family=Audiowide');
+                    text{
+                      font-family: 'Audiowide', cursive;
+                    }
+                 </style>
+                </defs>
+                <g>
+                  <path fill="#FFFFFF" d="M13.197,29.31c7.174,0,12.99-5.72,12.99-12.778c0-7.056-5.815-12.777-12.99-12.777
+                    S0.207,9.476,0.207,16.531C0.207,23.59,6.022,29.31,13.197,29.31"/>
+                </g>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#31CC73" d="M12.282,5.899c0.524,0.857,1.024,1.574,1.577,2.251
+                  c0.959,1.171,2.02,2.231,3.351,2.988c1.675,0.951,3.373,1.139,5.108,0.155c0.057-0.032,0.124-0.048,0.262-0.101
+                  c-1.158,2.901-2.231,5.76-1.871,8.914c-0.265-0.66-0.363-1.359-0.473-2.051c-0.145-0.901-0.235-1.813-0.253-2.73
+                  c-0.01-0.479,0.034-0.957,0.129-1.425c0.056-0.276-0.047-0.349-0.294-0.405c-0.449-0.103-0.822-0.048-1.234,0.208
+                  c-1.171,0.727-2.479,0.425-3.377-0.729c-0.201-0.258-0.369-0.543-0.538-0.825c-0.14-0.234-0.217-0.519-0.396-0.713
+                  c-0.349-0.379-0.749-0.71-1.149-1.081c-0.011,0.238-0.034,0.501-0.034,0.765c0,1.287-0.007,2.574,0.021,3.861
+                  c0.007,0.317-0.164,0.312-0.37,0.344c-0.625,0.096-0.607,0.097-0.678-0.529c-0.171-1.51-0.285-3.025-0.209-4.543
+                  C11.925,8.838,12.008,7.422,12.282,5.899z"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#31CC73" d="M13.204,15.831c1.971,0.001,3.335,1.901,2.666,3.757
+                  c-0.582,1.611-1.56,3.006-2.515,4.408c-0.09,0.133-0.166,0.215-0.294,0.027c-0.972-1.426-1.973-2.84-2.548-4.483
+                  C9.868,17.699,11.244,15.83,13.204,15.831z M13.199,20.35c1.064,0.02,1.941-0.836,1.949-1.899c0.008-1.046-0.841-1.907-1.887-1.919
+                  c-1.046-0.011-1.918,0.838-1.93,1.877C11.318,19.456,12.162,20.332,13.199,20.35z"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#32CC73" d="M6.898,14.35c0.449,3.557,1.056,7.062,2.531,10.361
+                  c-0.229-0.072-0.231-0.07-0.372-0.293c-1.456-2.273-2.37-4.765-2.97-7.381c-0.481-2.1-0.718-4.231-0.809-6.38
+                  c-0.004-0.119,0-0.237,0-0.358c0.163-0.013,0.197,0.115,0.263,0.188c0.745,0.824,1.549,1.586,2.432,2.26
+                  c0.182,0.139,0.254,0.284,0.271,0.509c0.057,0.745,0.142,1.487,0.216,2.249C8.006,15.021,7.455,14.706,6.898,14.35z"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#32CC73" d="M9.945,26.166c-0.917-0.234-1.702-0.688-2.209-1.518
+                  c-0.373-0.609-0.448-1.258-0.15-2.035c0.132,1.656,1.065,2.527,2.751,2.666c1.893,0.156,3.62-0.414,5.292-1.211
+                  c2.264-1.08,4.249-2.582,6.205-4.127c0.161-0.126,0.321-0.255,0.483-0.381c0.02-0.015,0.048-0.016,0.073-0.023
+                  c0.054,0.068,0.021,0.127-0.02,0.184c-2.122,2.871-4.718,5.125-8.178,6.234C12.8,26.402,11.379,26.531,9.945,26.166"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#32CC73" d="M11.536,13.786c-0.336-0.717-0.964-1.149-1.513-1.653
+                  c-0.048-0.044-0.098-0.099-0.162-0.076c0,0.643-0.025,1.281,0.007,1.916c0.041,0.819,0.124,1.637,0.197,2.454
+                  c0.013,0.143,0.024,0.261-0.109,0.364c-0.245,0.192-0.479,0.399-0.724,0.607c-0.704-3.115-0.813-6.318-0.573-9.55
+                  c0.171-0.007,0.187,0.13,0.243,0.207C9.599,9.007,10.364,9.9,11.233,10.7c0.175,0.162,0.257,0.323,0.251,0.565
+                  C11.462,12.1,11.505,12.933,11.536,13.786z"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" fill="#FEFEFE" d="M13.199,20.35c-1.037-0.018-1.88-0.894-1.868-1.941
+                  c0.012-1.039,0.884-1.888,1.93-1.877c1.046,0.012,1.895,0.873,1.887,1.919C15.14,19.514,14.263,20.369,13.199,20.35z"/>
+                <text transform="matrix(1 0 0 1 30.417 20.4141)" font-size="12" fill="#FFFFFF">BeLive</text>
+              </svg>
+            </a>
+
+            <a href="forgotPassword.html" target="_blank" class="status">
+              <span class="status__tag">Help</span>
+              <span>Forgot Password?</span>
+            </a>
+          </div>
+
+          <section class="hero container">
+            <h1>Buy. Sell. Request.</h1>
+            <h2>Access a community of people all trying to buy, sell, and request tickets to local events.</h2>
+
+            <div id="downloadDiv">
+            <a href="https://itunes.apple.com/us/app/proquo/id1171316729?ls=1&mt=8" class="button hero__button" id="iOSAppStore">
+              <img src="./images/iOSAppStore.svg" class="downloadImage" draggable="false" alt="Download BeLive">
+              App Store
+            </a>
+
+            <a href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en" class="button hero__button" id="googlePlay">
+              <img src="./images/googlePlayStore_Alt.svg" class="downloadImage" draggable="false" alt="Download BeLive">
+              Google Play
+            </a>
             </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <picture class="hero__image">
+              <img src="images/iphone.png" style="width: 100%" alt="BeLive Application" draggable="false">
+            </picture>
+          </section>
+        </header>
 
-                <ul class="nav navbar-nav navbar-left">
-                   
-                    <a href="#"><img style="height: 50px;" src="img/logoTemp.png"/></a>
-                    
-                </ul>
-
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a class="page-scroll" href="#features">Features</a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#contact">Contact</a>
-                    </li>
-                    <li>
-                        <a href="forgotPassword.html">Forgot Password</a>
-                    </li>
-                </ul>
+        <footer class="footer">
+          <section class="footer__marketing container">
+            <h3>The easiest way to stay up to date with what's going on around you.</h3>
+              <ul class="footer__marketing-features">
+                <li>
+                 <svg enable-background="new 0 0 24 24" height="24px" id="Layer_1" version="1.1" viewBox="0 0 24 24" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M11.513,12.38c-2.117,0-3.835-1.729-3.835-3.862c0-2.135,1.718-3.863,3.835-3.863s3.835,1.729,3.835,3.863  C15.348,10.65,13.63,12.38,11.513,12.38 M11.513,0C6.825,0,3.025,3.827,3.025,8.549c0,4.46,3.844,10.213,6.411,13.014  c0.959,1.045,2.076,2.454,2.076,2.454s1.2-1.417,2.229-2.493C16.306,18.84,20,13.451,20,8.549C20,3.827,16.2,0,11.513,0"/></svg>
+                </li>
+                <li>
+                  <svg enable-background="new 0 0 80 80" height="24px" id="Icons" version="1.1" viewBox="0 0 80 80" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path d="M61,20.047h-6V15h-5v5.047H30V15h-5v5.047h-5.919c-2.209,0-4,1.791-4,4V61c0,2.209,1.791,4,4,4H61c2.209,0,4-1.791,4-4   V24.047C65,21.838,63.209,20.047,61,20.047z M60,60H20V35h40V60z M60,30H20v-5h40V30z"/><rect height="5" width="5" x="38" y="40"/><rect height="5" width="5" x="48" y="40"/><rect height="5" width="5" x="38" y="50"/><rect height="5" width="5" x="28" y="50"/></g></svg>
+                </li>
+                <li>
+                  <svg baseProfile="tiny" height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><path d="M12,14c1.381,0,2.631-0.56,3.536-1.465C16.44,11.631,17,10.381,17,9s-0.56-2.631-1.464-3.535C14.631,4.56,13.381,4,12,4   S9.369,4.56,8.464,5.465C7.56,6.369,7,7.619,7,9s0.56,2.631,1.464,3.535C9.369,13.44,10.619,14,12,14z"/><path d="M20,15c0.69,0,1.315-0.279,1.768-0.731c0.453-0.452,0.732-1.077,0.732-1.769c0-0.69-0.279-1.315-0.732-1.768   C21.315,10.279,20.69,10,20,10c-0.691,0-1.316,0.279-1.769,0.732C17.779,11.185,17.5,11.81,17.5,12.5   c0,0.691,0.279,1.316,0.731,1.769S19.309,15,20,15z"/><path d="M20,15.59c-1.331,0-2.332,0.406-2.917,0.968C15.968,15.641,14.205,15,12,15c-2.266,0-3.995,0.648-5.092,1.564   C6.312,15.999,5.3,15.59,4,15.59c-2.188,0-3.5,1.09-3.5,2.182c0,0.545,1.312,1.092,3.5,1.092c0.604,0,1.146-0.051,1.623-0.133   c-0.01,0.091-0.04,0.18-0.04,0.27c0,1,2.406,2,6.417,2c3.762,0,6.417-1,6.417-2c0-0.085-0.011-0.17-0.02-0.255   c0.463,0.073,0.995,0.118,1.603,0.118c2.051,0,3.5-0.547,3.5-1.092C23.5,16.68,22.127,15.59,20,15.59z"/><path d="M4,15c0.69,0,1.315-0.279,1.768-0.732C6.221,13.815,6.5,13.19,6.5,12.5c0-0.689-0.279-1.314-0.732-1.768   C5.315,10.28,4.69,10,4,10c-0.691,0-1.316,0.28-1.769,0.732C1.779,11.186,1.5,11.811,1.5,12.5c0,0.69,0.279,1.315,0.731,1.768   C2.684,14.721,3.309,15,4,15z"/></g></svg>
+                </li>
+                <li>
+                  <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h24v24H0z" fill="none"/><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+                </li>
+              </ul>
+            <div class="footer__marketing-details">
             </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
+          </section>
 
-    <section id="download" class="download bg-primary text-center">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2">
-                    <h2 class="section-heading">The easiest way to buy and sell tickets</h2>
-                    <p>Available now on iOS and Android</p>
-                    <div class="badges">
-                        <a class="badge-link" id="googlePlayBadge" href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en"><img src="img/google-play-badge.svg" alt=""></a>
-                        <a class="badge-link" id="iOSBadge" href="#"><img src="img/app-store-badge.svg" alt=""></a>
-                    </div>
-                    <br>
-                    <center><a class="btn btn-outline btn-xl page-scroll" href="#liveTickets">View Live Tickets Near You</a></center>
-
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="liveTickets" style="padding: 0;">
-        <html>
-        <head>
-                <style>
-                    #map { 
-                        position: relative;
-                        height: 600px;
-                        width: 100%;
-                    }
-
-                    #markerLayer img {
-                    width: 50px !important;
-                    height: 50px !important;
-                    border-radius: 50%;
-                  }
-
-                  #content{
-                    text-align: center;
-                  }
-
-                  #firstHeading {
-                    height: 40px;
-                    width: 100%;
-                    color: #2ecc71;
-                  }
-
-                  #attrName{
-                    font-weight: bold;
-                    margin-bottom: 5px;
-                  }
-
-                  #attrVenue{
-                    margin-bottom: 5px;
-                  }
-
-                  #attrNumTickets{
-                    margin-bottom: 5px;
-                  }
-
-                  #interested{
-                    color: #2ecc71;
-                    margin-bottom: 5px;
-                  }
-
-                  .image-cropper {
-                        width: 125px;
-                        height: 125px;
-                        position: relative;
-                        overflow: hidden;
-                        border-radius: 50%;
-                        margin-left: auto;
-                        margin-right: auto;
-                    }
-
-                  #infoWindowAttrImg{
-                    display: inline;
-                    margin: 0 auto;
-                    height: 100%;
-                    width: auto;
-                  }
-
-                  #googleBadge, #appleBadge{
-                    max-width: 140px;
-                    width: 140px;
-                  }
-                </style>
-        </head>
-        <body>
-            <div id="map"></div>
-                <script>
-                    var markersArray = [];
-                    var hasCenteredCount = 0;
-
-                    function initMap() {
-                        var uluru = {lat: 40.0150, lng: -105.2705};  // LOCATION HERE
-                        var map = new google.maps.Map(document.getElementById('map'), {
-                                zoom: 13,
-                                minZoom: 12,
-                                scrollwheel: false, //DISABLE MAP SCROLLWHEEL
-                                center: uluru
-                            });
-
-
-                    $.getJSON("http://ipinfo.io", function(ipinfo){
-                        var latLong = ipinfo.loc.split(",");
-
-                        var pos = new google.maps.LatLng(latLong[0],
-                            latLong[1]);
-
-                        var infowindow = new google.maps.InfoWindow({
-                                content: 'Your General Location'
-                            });
-                        
-                        var marker = new google.maps.Marker({
-                            position: pos,
-                            map: map,
-                            animation: google.maps.Animation.DROP
-                        });
-
-                        google.maps.event.addListener(marker, 'mouseover', function() {
-                            infowindow.open(map, this);
-                        });
-
-                        google.maps.event.addListener(marker, 'mouseout', function() {
-                            infowindow.close();
-                        });
-
-
-                        map.setCenter(pos);
-                    });
-                    
-
-                    var myoverlay = new google.maps.OverlayView();
-                      myoverlay.draw = function () {
-                        //this assigns an id to the markerlayer Pane, so it can be referenced by CSS
-                        this.getPanes().markerLayer.id='markerLayer'; 
-                      };
-                      myoverlay.setMap(map);
-
-                    google.maps.event.addDomListener(map, 'bounds_changed', function() {
-                        if(hasCenteredCount < 2){
-                            showMarkers(map);
-                        }
-                    });
-
-                    google.maps.event.addDomListener(map, 'dragend', function() {
-                        showMarkers(map);
-                    });
-
-                    google.maps.event.addDomListener(map, 'zoom_changed', function() {
-                        showMarkers(map);
-                    });
-
-                    }
-
-                    function showMarkers(map){
-                        clearMarkers();
-                        var bounds = map.getBounds();
-
-                            var today = new Date();
-                            var dd = today.getDate();
-                            var mm = today.getMonth()+1; //January is 0!
-
-                            var yyyy = today.getFullYear();
-                            if(dd<10){
-                                dd='0'+dd;
-                            } 
-                            if(mm<10){
-                                mm='0'+mm;
-                            } 
-                            var today = yyyy+"-"+mm+"-"+dd;
-
-                            var args = {
-                                latBoundLeft: bounds.getSouthWest().lat(),
-                                latBoundRight: bounds.getNorthEast().lat(),
-                                lonBoundLeft: bounds.getSouthWest().lng(),
-                                lonBoundRight: bounds.getNorthEast().lng(),
-                                currentDate: today
-                            };
-
-                            //console.log(args);
-
-                            var getAttractionsRequest = getAttractions(args);
-
-                            getAttractionsRequest.done(function(result) {
-                                //console.log(result);
-                                var attractions = JSON.parse(result);
-                                
-                                for(var i = 0; i < attractions.length; i++){
-                                    var attraction = attractions[i];
-
-                                   
-
-                                    var icon = {
-                                        url: attraction["imageURL"], // url
-                                        scaledSize: new google.maps.Size(50,50),
-                                        origin: new google.maps.Point(0,0) // origin
-                                    };
-
-                                    var marker = new google.maps.Marker({
-                                        position: {lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])},
-                                        map: map,
-                                        icon: icon,
-                                        optimized: false
-                                    });
-
-                                    if(hasCenteredCount < 2){
-                                       map.setCenter({lat: parseFloat(attraction["lat"]), lng: parseFloat(attraction["lon"])});
-                                       hasCenteredCount += 1;
-                                    }
-
-                                    addInfoWindow(marker, attraction);
-                                }
-                                    
-
-                                }).fail(function (jqXHR, textStatus, errorThrown){
-                                    
-                                });
-                    }
-
-
-                    function clearMarkers() {
-                      for (var i = 0; i < markersArray.length; i++ ) {
-                        markersArray[i].setMap(null);
-                      }
-                      markersArray.length = 0;
-                    }
-
-                    function addInfoWindow(marker, attraction) {
-
-                        var description = (attraction["description"] != "") ? '<p>'+attraction["description"]+"</p>" : "";
-
-                        var date = new Date(attraction["date"]);
-
-                        var monthNames = [
-                          "Jan", "Feb", "Mar",
-                          "Apr", "May", "Jun", "Jul",
-                          "Aug", "Sept", "Oct",
-                          "Nov", "Dec"
-                        ];
-
-                        var day = date.getDate();
-                        var monthIndex = date.getMonth();
-                        var year = date.getFullYear();
-
-                        var contentString = '<div id="content">'+
-                            '<h1 id="firstHeading" class="firstHeading">'+monthNames[monthIndex] + ' ' + day + ', ' + year+'</h1>'+
-                            '<div id="bodyContent">'+
-                            '<p id="attrName">'+attraction["name"]+"</p>"+
-                            '<p id="attrVenue">'+attraction["venueName"]+"</p>"+
-                            '<div class="image-cropper"><img id="infoWindowAttrImg" src="'+attraction["imageURL"]+'"/></div>'+
-                            '<p id="attrNumTickets">Tickets: <b>$'+attraction["numTickets"]+"</b></p>"+
-                            '<p>Price: <b>$'+attraction["ticketPrice"]+"/Ticket</b></p>"+
-                            description +
-                            '<p id="interested">Interested in contacting the seller?</p>'+
-                            '<div><a class="badge-link" href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en"><img id="googleBadge" src="img/google-play-badge.svg" alt=""></a><a class="badge-link" href="#"><img id="appleBadge" src="img/app-store-badge.svg" alt=""></a></div>'+
-                            '</div>'+
-                            '</div>';
-
-                        var infowindow = new google.maps.InfoWindow({
-                          content: contentString
-                        });
-
-                        marker.addListener('click', function() {
-                            infowindow.open(marker.get('map'), marker);
-
-                            //facebook analytics
-                            fbq('trackCustom', 'attraction_click', {
-                                attractionID: attraction["attractionID"],
-                                attractionName: attraction["name"]
-                            });
-
-                        });
-
-                        markersArray.push(marker);
-                    }
-
-
-                    function getAttractions(args){
-
-                        return $.ajax({
-                            url: "scalpr_ws/get_attractions.php",
-                            data: args,
-                            type: "POST",
-                            success: function(response) {
-                                result = response;
-                            }
-                        });
-
-                    }
-
-                </script>
-                <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAofWSHIjQOsTzKw_2fbSs-gNE5mp1sIBQ&callback=initMap">
-                </script>
-        </body>
-        </html>   
-    </section>
-
-    <section id="features" class="features">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="section-heading">
-                        <h2>Get Started Today</h2>
-                        <hr>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="device-container">
-                        <div class="device-mockup iphone6_plus portrait white">
-                            <div class="device">
-                                <div class="screen">
-                                    <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
-                                    <img src="img/demo-screen-2.png" class="img-responsive" alt=""> </div>
-                                <div class="button">
-                                    <!-- You can hook the "home button" to some JavaScript events or just remove it -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <i class="icon-globe text-primary"></i>
-                                    <h3>Worldwide Service</h3>
-                                    <p class="text-muted">Buy and sell tickets anywhere in the world.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <i class="icon-call-in text-primary"></i>
-                                    <h3>Simple Connections</h3>
-                                    <p class="text-muted">Contact other ProQuo users with our in app messaging.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <i class="icon-music-tone-alt text-primary"></i>
-                                    <h3>Be In The Know</h3>
-                                    <p class="text-muted">Use ProQuo to see what events are going on near you.</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="feature-item">
-                                    <i class="icon-like text-primary"></i>
-                                    <h3>Free To Use</h3>
-                                    <p class="text-muted">Enough said.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </section>
-
-   <!-- <section class="cta">
-    <div class="cta-content">
-        <div class="container">
-            
-        </div>
-    </div>
-    <div class="overlay"></div>
-    </section> -->
-
-    <section id="contact" class="contact bg-primary">
-        <div class="container">
-            <p style="color: white; font-size: 16pt; ">
-                ProQuo is a map-based ticket commerce app for buying and selling tickets to nearby events such as concerts, sporting events, or anything that requires a ticket for admission. With ProQuo there’s no need to pay full price, or possibly more, for a ticket you forgot to purchase and you don’t have to lose all your money when you can’t make it to an event.
-                <br><br>
-                ProQuo makes it easy to buy by centering a map on your location then showing you all the tickets that are being sold around you. Tickets are posted by location and if you see a ticket you are interested in it’s as simple as touching the post then contacting the seller.
-                <br><br>
-                If you are looking to sell all you have to do is touch the button on the bottom right corner of the home screen and enter all your ticket details. Once entered, chose the location where you want the ticket to appear and you’re done. Interested buyers will be able to message you through the app.
+          <section class="footer__brand container">
+            <p>
+              <a class="footerSpacing" href="help/policies/terms_of_service.html">Terms</a>
+              <a class="footerSpacing" href="help/policies/privacy_policy.html">Privacy</a>
+              <a class="footerSpacing" href="forgotPassword.html">Forgot Password?</a>
+              <a class="footerSpacing" href="mailto:Contact@BeliveTickets.com">Contact@BeliveTickets.com</a>
             </p>
-            <hr>
-            <br>
-            <h3>Wanna chat? Email us at support@proquo.com or check out our Facebook with the link below!</h3>
-            <ul class="list-inline list-social">
-                <li class="social-facebook">
-                    <a href="https://www.facebook.com/proquoapp"><i class="fa fa-facebook"></i></a>
-                </li>
-            </ul>
-        </div>
-    </section>
+            
+            
+          </section>
+        </footer>
 
-    <footer>
-        <div class="container">
-            <ul class="list-inline">
-                <li>
-                    <a href="help/policies/privacy_policy.html">Privacy</a>
-                </li>
-                <li>
-                    <a href="help/policies/terms_of_service.html">Terms</a>
-                </li>
-            </ul>
-        </div>
-    </footer>
+        <script type="text/javascript">
 
-    <!-- jQuery -->
-    <script src="vendor/jquery/jquery.min.js"></script>
+        // facebook analytics below **************
+            
+        $("#iOSAppStore").click(function(){
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+            fbq('trackCustom', 'download_app', {
+            platform: 'iOS'
+            });
 
-    <!-- Plugin JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+            ga('send', {
+              hitType: 'event',
+              eventCategory: 'Button',
+              eventAction: 'Download',
+              eventLabel: 'Download_iOS',
+              transport: 'beacon'
+            });
+        });
 
-    <!-- Theme JavaScript -->
-    <script src="js/new-age.min.js"></script>
+        $("#googlePlay").click(function(){
 
-    <script type="text/javascript">
+          console.log("test");
 
-    // facebook analytics below **************
+            fbq('trackCustom', 'download_app', {
+            platform: 'googlePlay'
+            });
+
+            ga('send', {
+              hitType: 'event',
+              eventCategory: 'Button',
+              eventAction: 'Download',
+              eventLabel: 'Download_Android',
+              transport: 'beacon'
+            });
+
+        });
+
+        // facebook analytics end ******************
+
+        </script>
         
-    $("#iOSBadge").click(function(){
-        fbq('trackCustom', 'download_app', {
-        platform: 'iOS'
-        });
-    });
-
-    $("#googlePlayBadge").click(function(){
-        fbq('trackCustom', 'download_app', {
-        platform: 'googlePlay'
-        });
-    });
-
-    // facebook analytics end ******************
-
-    </script>
-
-</body>
-
+    </body>
 </html>

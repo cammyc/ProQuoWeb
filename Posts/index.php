@@ -6,6 +6,11 @@ $attractionID = $_GET["id"];
 
 $attraction = getSingleAttraction($mysqli, $attractionID);
 
+$color = ($attraction->postType == 1) ? "#2ecc71" : "#3498db";
+$requesterOrSeller = ($attraction->postType == 2) ? "request" : "sell";
+$requestedOrSold = ($attraction->postType == 2) ? "REQUESTED" : "SOLD";
+
+
 $mysqli->close();
 
 ?>
@@ -38,6 +43,20 @@ $mysqli->close();
 
     <link rel="canonical" href="http://belivetickets.com/Posts/index.php?id=<?php echo $attractionID; ?>" />
 
+     <!-- Favicons -->
+        <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css?family=Audiowide" rel="stylesheet"/>
+        <link rel="shortcut icon" href="./favicon.ico">
+        <link rel="apple-touch-icon" href="../images/favicon/icon-128.png">
+        <link rel="icon" href="../images/favicon/icon-32.png" sizes="32x32">
+        <link rel="shortcut icon" sizes="196x196" href="../images/favicon/icon-256.png">
+        <link rel="icon" type="image/png" href="../images/favicon/icon-256.png" sizes="196x196" />
+        <link rel="icon" type="image/png" href="../images/favicon/icon-128.png" sizes="96x96" />
+        <link rel="icon" type="image/png" href="../images/favicon/icon-32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="../images/favicon/icon-16.png" sizes="16x16" />
+        <link rel="icon" type="image/png" href="../images/favicon/icon-128.png" sizes="128x128" />
+        <link rel="mask-icon" href="../images/favicon/BeLive.svg">
+
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <style>
@@ -61,9 +80,34 @@ $mysqli->close();
     	}
 
     	img[src="<?php echo $attraction->imageURL; ?>"]{
-	    	border-radius:50%;
+	    	/*border-radius:50%;
 	    	width: 50px;
-	    	height: 50px;
+	    	height: 50px;*/
+	    	position: relative;
+			border-radius: 50%;
+			width: 100%;
+			height: auto;
+			padding-top: 100%;
+			background: white;
+	  	}
+
+	  	#requestSell{
+	  		z-index: 5;
+	  		position: absolute;
+		    width: 250px;
+		    padding-left: 10px;
+		    padding-right: 10px;
+	  		left: 50%;
+	  		margin-left: -135px;
+	  		bottom: 20px;
+	  		box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+	  		background: <?php echo $color; ?>;
+	  	}
+
+	  	#requestSellText{
+	  		color: #fff;
+	  		font-weight: bold;
+	  		text-align: center;
 	  	}
 
 
@@ -79,7 +123,7 @@ $mysqli->close();
 	  	}
 
 	  	#dateContainer{
-	  		background: #2ecc71;
+	  		background: <?php echo $color; ?>;
 	  	}
 
 	  	#dateText{
@@ -158,10 +202,47 @@ $mysqli->close();
 		   border-radius: 2px 2px 0 0;
 		}
 
+
+		/**************** MOBILE ******************/
+
+		@media screen and (max-width: 480px) {
+		    #content{
+		  		width: 274px;
+		  		height: auto;
+	  		}
+
+	  		.gm-style-iw {
+			   width: 274px !important;
+			   top: 15px !important; /*// move the infowindow 15px down*/
+			   left: 25px !important;
+			   background-color: #fff;
+			   box-shadow: 0 1px 6px rgba(106, 106, 106, 0.6);
+			   /*border: 1px solid rgba(72, 181, 233, 0.6);*/
+			   border-radius: 2px 2px 0 0;
+			}
+
+			#downloadDiv{
+		  		position: relative;
+		  		width: 250px;
+		  		left: 50%;
+		  		margin-left: -125px;
+		  	}
+
+			  	.badge-link img{
+		    		height: 35px;
+		    	}
+		}
+
     </style>
   </head>
   <body>
     <div id="map"></div>
+
+    <div id="requestSell">
+    	
+    	<p id="requestSellText">This ticket is being <?php echo $requestedOrSold; ?></p>
+
+    </div>
 
     <script>
       function initMap() {
@@ -186,7 +267,7 @@ $mysqli->close();
 								      '<p id="numTickets">Tickets: <b><?php echo addslashes($attraction->numTickets); ?></b></p>'+
 								      '<p id="price">Price: <b>$<?php echo addslashes($attraction->ticketPrice); ?>/Ticket</b></p>'+
 								      description +
-								      '<p id="price"><b>Want to contact the seller?</b></p>'+
+								      '<p id="price"><b>Want to contact the <?php echo $requesterOrSeller; ?>er?</b></p>'+
 								      '<div id="downloadDiv">'+
 									      '<a class="badge-link" id="googlePlayBadge" href="https://play.google.com/store/apps/details?id=com.scalpr.scalpr&hl=en"><img src="../images/google-play-badge.svg" alt=""/>'+
 									      '<a class="badge-link" id="iOSBadge" href="https://itunes.apple.com/us/app/proquo/id1171316729?ls=1&mt=8"><img src="../images/app-store-badge.svg" alt=""></a>'+ 
@@ -235,7 +316,7 @@ $mysqli->close();
 			iwCloseBtn.css({
 			  opacity: '1', // by default the close button has an opacity of 0.7
 			  right: '13px', top: '3px', // button repositioning
-			  border: '7px solid #2ecc71', // increasing button border and new color
+			  border: '7px solid <?php echo $color; ?>', // increasing button border and new color
 			  'border-radius': '13px', // circular effect
 			  'box-shadow': '0 0 5px #3990B9' // 3D effect to highlight the button
 			  });

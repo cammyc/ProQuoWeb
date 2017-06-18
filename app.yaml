@@ -4,7 +4,7 @@ api_version: 1
 handlers:
 
 - url: /
-  script: index.html
+  script: index.php
 
 - url: /Posts/
   script: Posts/index.php
