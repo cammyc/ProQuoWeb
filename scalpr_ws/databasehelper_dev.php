@@ -204,20 +204,6 @@ class Security
 	}
 }
 
-class UserProfile
-{
-	public $userID;
-	public $firstName;
-	public $lastName;
-	public $email;
-	public $phoneNumber;
-	public $password;
-	public $displayPicURL;
-	public $facebookID;
-	public $googleID;
-	public $accessToken;
-	// public $stripeCustomerID;
-}
 
 class Attraction
 {
@@ -323,7 +309,7 @@ class Filters
 
 function getDB(){//replace all other uses so that when site goes live I only have to change this function from root,root
   //return new mysqli("localhost", "root", "root", "biketime");
-	$mysqli = new mysqli(null, "root", '$c@lpR', "Scalpr", null, "/cloudsql/scalpr-143904:us-central1:scalpr-db");
+	$mysqli = new mysqli(null, "root", '$c@lpR', "Scalpr", null, "/cloudsql/scalpr-143904:us-central1:dev-scalpr-db");
 	$mysqli->set_charset('utf8mb4');
   	return $mysqli;
 }
@@ -1778,6 +1764,52 @@ function validateUserPhone($mysqli, $userPhone){
 	}else{
 		return 0;
 	}
+}
+
+/* STRIPE API/SUPPORT FUNCTIONS BELOW */
+
+class StripeAccount
+{
+	public $userID;
+	public $connectID;
+	public $customerID;
+}
+
+class UserProfile
+{
+	public $userID;
+	public $firstName;
+	public $lastName;
+	public $email;
+	public $phoneNumber;
+	public $password;
+	public $displayPicURL;
+	public $facebookID;
+	public $googleID;
+	public $accessToken;
+	public $stripeAccounts;
+}
+
+function getStripeAccount($mysqli, $userID){
+
+	$stripeQuery = 'SELECT ConnectID, CustomerID FROM StripeAccounts WHERE UserID = ?';
+
+	$strAcct = new StripeAccount();
+
+	$statement = $mysqli->prepare($stripeQuery);
+	$statement->bind_param("i", $userID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->bind_result($strAcct->connectID, $strAcct->customerID);
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	if($row_count > 0){
+		return $strAcct;
+	}else{
+		return false;
+	}
+
 }
 
 ?>
