@@ -1772,7 +1772,7 @@ class StripeAccount
 {
 	public $userID;
 	public $connectID;
-	public $customerID;
+	public $paymentType;
 }
 
 class UserProfile
@@ -1792,7 +1792,7 @@ class UserProfile
 
 function getStripeAccount($mysqli, $userID){
 
-	$stripeQuery = 'SELECT ConnectID, CustomerID FROM StripeAccounts WHERE UserID = ?';
+	$stripeQuery = 'SELECT ConnectID, PaymentType FROM StripeAccounts WHERE UserID = ?';
 
 	$strAcct = new StripeAccount();
 
@@ -1800,7 +1800,7 @@ function getStripeAccount($mysqli, $userID){
 	$statement->bind_param("i", $userID);
 	$statement->execute();
 	$statement->store_result();
-	$statement->bind_result($strAcct->connectID, $strAcct->customerID);
+	$statement->bind_result($strAcct->connectID, $strAcct->paymentType);
 	$statement->fetch();
 	$row_count = $statement->num_rows;
 
@@ -1810,6 +1810,20 @@ function getStripeAccount($mysqli, $userID){
 		return false;
 	}
 
+}
+
+function saveStripeAccount($mysqli, $userID, $stripeConnectID, $paymentType){
+	$insertQuery = 'INSERT INTO StripeAccounts VALUES (?, ?, ?)';
+
+	$statement = $mysqli->prepare($insertQuery);
+	$statement->bind_param("iss", $userID, $stripeConnectID, $paymentType);
+	$statement->execute();
+
+  	if($statement){
+  		return true;
+  	}else{
+  		return false;
+  	}
 }
 
 ?>
