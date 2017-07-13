@@ -11,8 +11,10 @@
 	$stripeDetails = getStripeAccount($mysqli, $userID);
 
 	$array = \Stripe\Account::retrieve($stripeDetails->connectID)->external_accounts->all(array(
-  	'limit'=>1, 'object' => stripeDetails->paymentType));
+  	'limit'=>1, 'object' => $stripeDetails->paymentType));
 
-  	echo json_encode($payment = $array->data[0]);
+	$payment = $array->data[0];
+
+  	echo json_encode($payment);
 
 ?>

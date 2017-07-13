@@ -3,7 +3,7 @@
 	require_once '../vendor/autoload.php';
 	\Stripe\Stripe::setApiKey("sk_test_dQa2CvZAK2mnz9htGXiAyo4w");
 
-	$userID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
+	// $userID = Security::authenticateToken($_SERVER['HTTP_SCALPRVERIFICATION']);
 
 	// /* REQUIRED SECURITY INFO BELOW - Billing info for customer and connected account*/
 	$country = $_POST["country"]; //ISO 3166-1 alpha-2 country code.
@@ -23,7 +23,7 @@
 	// $dobMonth = $_POST["dobMonth"];
 	// $dobYear = $_POST["dobYear"];
 
-	// $userID = 1;
+	$userID = 1;
 
 	/* REQUIRED SECURITY INFO BELOW - Billing info for customer and connected account*/
 	// $country = "CA"; //ISO 3166-1 alpha-2 country code.
