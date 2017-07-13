@@ -114,6 +114,11 @@
 
 		$acct->external_accounts->create(array("external_account" => $cardToken));
 
+		$acct->tos_acceptance->date = time();
+		// Assumes you're not using a proxy
+		$acct->tos_acceptance->ip = $_SERVER['REMOTE_ADDR'];
+		$acct->save();
+
 		$result = saveStripeAccount($mysqli, $userID, $acct->id, "card"); //"bank_account" is other option
 
 		if(!$result){
