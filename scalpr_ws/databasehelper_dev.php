@@ -1772,6 +1772,9 @@ class StripeAccount
 {
 	public $userID;
 	public $connectID;
+	public $customerID;
+	public $sourceID;
+	public $paymentID;
 	public $paymentType;
 }
 
@@ -1792,7 +1795,7 @@ class UserProfile
 
 function getStripeAccount($mysqli, $userID){
 
-	$stripeQuery = 'SELECT ConnectID, PaymentType FROM StripeAccounts WHERE UserID = ?';
+	$stripeQuery = 'SELECT ConnectID, CustomerID, SourceID, PaymentID, PaymentType FROM StripeAccounts WHERE UserID = ?';
 
 	$strAcct = new StripeAccount();
 
@@ -1800,7 +1803,7 @@ function getStripeAccount($mysqli, $userID){
 	$statement->bind_param("i", $userID);
 	$statement->execute();
 	$statement->store_result();
-	$statement->bind_result($strAcct->connectID, $strAcct->paymentType);
+	$statement->bind_result($strAcct->connectID, $strAcct->customerID, $strAcct->sourceID, $strAcct->paymentID, $strAcct->paymentType);
 	$statement->fetch();
 	$row_count = $statement->num_rows;
 
@@ -1812,11 +1815,96 @@ function getStripeAccount($mysqli, $userID){
 
 }
 
-function saveStripeAccount($mysqli, $userID, $stripeConnectID, $paymentType){
-	$insertQuery = 'INSERT INTO StripeAccounts VALUES (?, ?, ?)';
+function saveStripeAccountPaymentMethod($mysqli, $userID, $customerID, $sourceID, $paymentID, $paymentType){
+	$checkQuery = 'SELECT UserID FROM StripeAccounts WHERE UserID = ?';
+
+	$statement = $mysqli->prepare($checkQuery);
+	$statement->bind_param("i", $userID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	if($row_count > 0){
+		$updateQuery = 'UPDATE StripeAccounts SET CustomerID = ?, SourceID = ?, PaymentID = ?, PaymentType = ? WHERE UserID = ?';
+
+		$statement = $mysqli->prepare($updateQuery);
+		$statement->bind_param("ssssi", $customerID, $sourceID, $paymentID, $paymentType, $userID);
+
+		$statement->execute();
+
+		if($statement){
+			$statement->close();
+			return true;
+		}else{
+			$statement->close();
+			return false;
+		}
+	}else{
+		$insertQuery = 'INSERT INTO StripeAccounts VALUES (?, ?, ?, ?, ?, ?, ?)';
+
+		$statement = $mysqli->prepare($insertQuery);
+		$null = null;
+		$statement->bind_param("issssss", $userID, $null, $customerID, $sourceID, $paymentID, $paymentType, $null);
+		 //NEED TO ADD RECEIVAL TYPE TO DB - dw about currency, can get from stripe api - allow customer and connect ID to be null
+		$statement->execute();
+
+	  	if($statement){
+	  		return true;
+	  	}else{
+	  		return false;
+	  	}
+	}
+}
+
+function saveStripeAccountReceivalMethod($mysqli, $userID, $connectID, $receivalType){
+	$checkQuery = 'SELECT UserID FROM StripeAccounts WHERE UserID = ?';
+
+	$statement = $mysqli->prepare($checkQuery);
+	$statement->bind_param("i", $userID);
+	$statement->execute();
+	$statement->store_result();
+	$statement->fetch();
+	$row_count = $statement->num_rows;
+
+	if($row_count > 0){
+		$updateQuery = 'UPDATE StripeAccounts SET ConnectID = ?, ReceivalType = ? WHERE UserID = ?';
+
+		$statement = $mysqli->prepare($updateQuery);
+		$statement->bind_param("si", $connectID, $receivalType, $userID);
+
+		$statement->execute();
+
+		if($statement){
+			$statement->close();
+			return true;
+		}else{
+			$statement->close();
+			return false;
+		}
+	}else{
+		$insertQuery = 'INSERT INTO StripeAccounts (UserID, ConnectID, ReceivalType) VALUES (?, ?, ?)';
+
+		$statement = $mysqli->prepare($insertQuery);
+		$null = null;
+		$statement->bind_param("iss", $userID, $connectID, $receivalType);
+		$statement->execute();
+
+	  	if($statement){
+	  		return true;
+	  	}else{
+	  		return false;
+	  	}
+	}
+
+
+}
+
+function saveStripeAccount($mysqli, $userID, $stripeConnectID, $customerID, $sourceID, $paymentID, $paymentType){
+	$insertQuery = 'INSERT INTO StripeAccounts VALUES (?, ?, ?, ?, ?, ?)';
 
 	$statement = $mysqli->prepare($insertQuery);
-	$statement->bind_param("iss", $userID, $stripeConnectID, $paymentType);
+	$statement->bind_param("isssss", $userID, $stripeConnectID, $customerID, $sourceID, $paymentID, $paymentType);
 	$statement->execute();
 
   	if($statement){

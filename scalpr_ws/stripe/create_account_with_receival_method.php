@@ -11,10 +11,8 @@
 	$line1 = $_POST["addressLine"];
 	$postalCode = $_POST["postalCode"];
 	$provinceState = $_POST["provinceState"];
-
-	$cardToken = $_POST["tokenID"];
-	$cardID = $_POST["cardID"];
-
+	$receivalType = $_POST["receivalType"]; //"card" or "bank_account"
+	$token = $_POST["tokenID"];
 
 	// /* Additional connected account info */
 	// $firstname = "john";//- get from db
@@ -26,68 +24,10 @@
 
 	$userID = 1;
 
-	/* REQUIRED SECURITY INFO BELOW - Billing info for customer and connected account*/
-	// $country = "CA"; //ISO 3166-1 alpha-2 country code.
-	// $city = "Toronto";
-	// $line1 = "55 Colin Ave";
-	// $postalCode = "M5P2B8";
-	// $provinceState = "ON";
-
-	// /* CARD INFO */
-	// $paymentType = "card"; //could be account
-	// $expMonth = "11";
-	// $expYear = "19";
-	// $number = "4000056655665556";
-	// $cvc = "111";
-	// $nameOnCard = "";
-	// $currency = "CAD"; //Three-letter ISO currency code
-
-	/* Additional connected account info */
-	// $firstname = "Cameron";//- get from db
-	// $lastname = "Connor"; //- get from db
-	// $email = null; // get from db
-	// $dobDay = "03";
-	// $dobMonth = "09";
-	// $dobYear = "1997";
-
-
-	/* SOURCE will be used for connected account external account and customer payment method */
-
-	// $source = [
-	// 	  "object" => $paymentType,
-	// 	  "exp_month" => $expMonth,
-	// 	  "exp_year" => $expYear,
-	// 	  "number" => $number,
-	// 	  "currency" => $currency,
-	// 	  "cvc" => $cvc
-	// 	];
-
-
-
-	// try {
-	// 	$customer = \Stripe\Customer::create(array(
-	// 		  "description" => "Customer for ".$firstname." ".$lastname,
-	// 		  "email" => $email,
-	// 		  "source" => $source // obtained with Stripe.js
-	// 		));
-	// } catch(\Stripe\Error $e) {
-	//   http_response_code(402);
-	//   return;
-	// }
-
 	try {
 		$mysqli = getDB();
 
 		$user = getUserDetails($mysqli, $userID);
-
-		$source = \Stripe\Source::create(array("token" => $cardToken, "type" => "card")); //try reusing source to add payment to customer and connected account
-
-
-		$customer = \Stripe\Customer::create(array(
-			  "description" => "Customer for ".$user->firstName." ".$user->lastName,
-			  // "email" => $email,
-			  "source" => $source->id
-		));
 
 		$address = [
 			"city" => $city,
@@ -122,7 +62,7 @@
 		    "payout_schedule" => $payoutSchedule
 		));
 
-		$acct->external_accounts->create(array("external_account" => "tok_visa_debit"));
+		$acct->external_accounts->create(array("external_account" => $token));
 
 		$acct->tos_acceptance->date = time();
 		// Assumes you're not using a proxy
@@ -137,7 +77,7 @@
 
 		// echo json_encode($token);
 
-		$result = saveStripeAccount($mysqli, $userID, $acct->id, $customer->id, $source->id, $cardID, "card"); //"bank_account" is other option
+		$result = saveStripeAccountReceivalMethod($mysqli, $userID, $acct->id, $receivalType); //"bank_account" is other option
 
 		if(!$result){
 			$mysqli->close();
