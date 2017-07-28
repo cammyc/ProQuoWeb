@@ -1776,6 +1776,9 @@ class StripeAccount
 	public $sourceID;
 	public $paymentID;
 	public $paymentType;
+	public $receivalType;
+	public $paymentPreview;
+	public $receivalPreview;
 }
 
 class UserProfile
@@ -1790,12 +1793,12 @@ class UserProfile
 	public $facebookID;
 	public $googleID;
 	public $accessToken;
-	public $stripeAccounts;
+	public $stripeAccount;
 }
 
 function getStripeAccount($mysqli, $userID){
 
-	$stripeQuery = 'SELECT ConnectID, CustomerID, SourceID, PaymentID, PaymentType FROM StripeAccounts WHERE UserID = ?';
+	$stripeQuery = 'SELECT ConnectID, CustomerID, SourceID, PaymentID, PaymentType, ReceivalType FROM StripeAccounts WHERE UserID = ?';
 
 	$strAcct = new StripeAccount();
 
@@ -1803,7 +1806,7 @@ function getStripeAccount($mysqli, $userID){
 	$statement->bind_param("i", $userID);
 	$statement->execute();
 	$statement->store_result();
-	$statement->bind_result($strAcct->connectID, $strAcct->customerID, $strAcct->sourceID, $strAcct->paymentID, $strAcct->paymentType);
+	$statement->bind_result($strAcct->connectID, $strAcct->customerID, $strAcct->sourceID, $strAcct->paymentID, $strAcct->paymentType, $strAcct->receivalType);
 	$statement->fetch();
 	$row_count = $statement->num_rows;
 

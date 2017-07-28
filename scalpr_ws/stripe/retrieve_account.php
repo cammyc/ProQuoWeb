@@ -12,14 +12,14 @@
 
 	// $acct = \Stripe\Account::retrieve($stripeDetails->connectID);
 
-	// $cus = \Stripe\Customer::retrieve($stripeDetails->customerID);
+	$cus = \Stripe\Customer::retrieve($stripeDetails->customerID);
 
-		$array = \Stripe\Account::retrieve($stripeDetails->connectID)->external_accounts->all(array(
-  	'limit'=>1, 'object' => $stripeDetails->paymentType));
+	// $array = \Stripe\Account::retrieve($stripeDetails->connectID)->external_accounts->all(array(
+ //  	'limit'=>1, 'object' => $stripeDetails->paymentType));
 
-	$payment = $array->data[0];
+	// $payment = $array->data[0]->last4;
 
-	echo json_encode($payment);
+	echo json_encode($cus->sources->data[0]->last4);
 
   	// echo json_encode($acct);
   	// echo "<br><br>";
